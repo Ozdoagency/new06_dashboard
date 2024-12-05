@@ -3,19 +3,19 @@
 @tailwind utilities;
 
 @keyframes gradientBackground {
-  0% {
-    background-position: 0% 50%;
+  10% {
+    background-position: 0% 40%;
   }
   50% {
-    background-position: 100% 50%;
+    background-position: 100% 60%;
   }
   100% {
-    background-position: 0% 50%;
+    background-position: 0% 30%;
   }
 }
 
 .dynamic-gradient {
-  background: linear-gradient(270deg, #f7fafc, #e2e8f0, #ebf8ff, #f7fafc, #e2e8f0, #ebf8ff);
+  background: linear-gradient(270deg, #f7fafc, #e2e8f0, #ebf8ff, #f7fafc, #e2e4f0, #ebf8ff);
   background-size: 500% 500%;
   animation: gradientBackground 15s ease infinite;
 }

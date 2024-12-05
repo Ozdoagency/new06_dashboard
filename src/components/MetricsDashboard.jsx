@@ -4,7 +4,7 @@ import {
   Tooltip, Legend, ResponsiveContainer, ReferenceLine 
 } from 'recharts';
 import { Calendar } from './ui/Calendar';
-import { Popover, PopoverContent, PopoverTrigger } from './ui/popover'; // Обновленный импорт
+import { Popover, PopoverContent, PopoverTrigger } from './ui/popover';
 import { 
   ArrowUpRight, ArrowDownRight, DollarSign,
   UserCheck, Calculator, BarChart,
@@ -69,24 +69,6 @@ const translations = {
   }
 };
 
-// Обновленный компонент DatePickerWithRange с форматированием даты
-const DatePickerWithRange = ({ dateRange, onSelect, isMobile }) => (
-  <Popover>
-    <PopoverTrigger asChild>
-      <button className="px-4 py-2 rounded-lg text-sm bg-blue-50 text-blue-600 hover:bg-blue-100">
-        {formatDate(dateRange.from)} - {formatDate(dateRange.to)}
-      </button>
-    </PopoverTrigger>
-    <PopoverContent align="start" className={isMobile ? "w-auto p-0" : "w-[600px] p-0"}>
-      <MetricsDashboardCalendar 
-        dateRange={dateRange}
-        onSelect={onSelect}
-        isMobile={isMobile}
-      />
-    </PopoverContent>
-  </Popover>
-);
-
 const CalendarNavigationButton = ({ direction, onClick }) => {
   const Icon = direction === 'previous' ? ChevronLeft : ChevronRight;
   return (
@@ -137,44 +119,44 @@ const MetricsDashboardCalendar = ({ dateRange, onSelect, isMobile }) => (
   />
 );
 
-// Обновляем функцию суммирования значений
-const sumMetricValues = (data, metric) => {
-  switch (metric) {
-    case 'leads':
-    case 'qualified':
-      // Суммируем количество
-      return data.reduce((sum, item) => sum + Number(item[metric]), 0);
-    case 'actual':
-      // Суммируем бюджет
-      return data.reduce((sum, item) => sum + Number(item[metric]), 0);
-    case 'cr':
-      // Считаем среднее значение CR
-      return data.reduce((sum, item) => sum + Number(item[metric]), 0) / data.length;
-    case 'leadCost':
-    case 'qualCost':
-      // Считаем среднюю стоимость
-      return data.reduce((sum, item) => sum + Number(item[metric]), 0) / data.length;
-    default:
-      return 0;
-  }
-};
+const DatePickerWithRange = ({ dateRange, onSelect, isMobile }) => (
+  <Popover>
+    <PopoverTrigger asChild>
+      <button className="px-4 py-2 rounded-lg text-sm bg-blue-50 text-blue-600 hover:bg-blue-100">
+        {dateRange.from.toLocaleDateString('ru-RU')} - {dateRange.to.toLocaleDateString('ru-RU')}
+      </button>
+    </PopoverTrigger>
+    <PopoverContent align="start" className={isMobile ? "w-auto p-0" : "w-[600px] p-0"}>
+      <MetricsDashboardCalendar 
+        dateRange={dateRange}
+        onSelect={onSelect}
+        isMobile={isMobile}
+      />
+    </PopoverContent>
+  </Popover>
+);
 
-const MetricsDashboard = () => {
-  const [data, setData] = useState([]);
-  const [width, setWidth] = useState(() => (typeof window !== 'undefined' ? window.innerWidth : 0));
-  const [lang, setLang] = useState('ua');
+// Определяем компонент SparkLine
+const SparkLine = ({ data, dataKey, color, height = 30 }) => (
+  <ResponsiveContainer width="100%" height={height}>
+    <LineChart data={data}>
+      <Line 
+        type="monotone" 
+        dataKey={dataKey} 
+        stroke={color} 
+        strokeWidth={1} 
+        dot={false} 
+      />
+    </LineChart>
+  </ResponsiveContainer>
+);
+
+const MetricsDashboard = ({ initialData = [] }) => {
+  const [lang, setLang] = useState('ua'); // Установите основной язык на украинский
+  const [data, setData] = useState(initialData); // Добавьте хук состояния для данных
+  const [loading, setLoading] = useState(true); // Добавлено состояние для прелоадера
+  const [width, setWidth] = useState(typeof window !== 'undefined' ? window.innerWidth : 0);
   const isMobile = useMemo(() => width < 768, [width]);
-
-  // Изменяем начальные даты на первый и последний день текущего месяца
-  const [dateRange, setDateRange] = useState(() => {
-    const now = new Date();
-    const from = new Date(now.getFullYear(), now.getMonth(), 1);
-    const to = new Date(now.getFullYear(), now.getMonth() + 1, 0);
-    return { from, to };
-  });
-
-  // Добавляем состояние загрузки
-  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const handleResize = () => setWidth(window.innerWidth);
@@ -184,164 +166,143 @@ const MetricsDashboard = () => {
     }
   }, []);
 
-  // Обновляем функцию для парсинга даты в формате DD.MM.YYYY
-  const parseDate = (dateStr) => {
-    const [day, month, year] = dateStr.split('.');
-    return new Date(year, month - 1, day);
-  };
-
-  // Обновляем useEffect для загрузки данных
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setIsLoading(true);
-        const dataPromise = new Promise((resolve) => {
-          window.handleResponse = (sheetData) => {
-            resolve(sheetData);
-          };
-        });
-
-        const script = document.createElement('script');
-        script.src = 'https://script.google.com/macros/s/AKfycbyCEKUF7S7bVEOtDkjKQrCJIP2P-SVOeHuW2O51kGdikeRHG_8kiU7s_-t8bl3eSkao2Q/exec?callback=handleResponse';
-        document.body.appendChild(script);
-
-        const sheetData = await dataPromise;
-        // Теперь не преобразуем date, оставляем как есть
-        const processedData = sheetData.map(item => ({
-          ...item,
-          // Оставляем date как есть, так как он уже в нужном формате
-          dateObj: parseDate(item.date) // Добавляем dateObj для внутренних сравнений
-        }));
-
-        setData(processedData);
-        
-        if (processedData.length > 0) {
-          setStartIdx(0);
-          setEndIdx(processedData.length - 1);
-          
-          // Устанавливаем начальный диапазон дат на основе первой и последней записи
-          const firstDate = parseDate(processedData[0].date);
-          const lastDate = parseDate(processedData[processedData.length - 1].date);
-          setDateRange({ from: firstDate, to: lastDate });
-        }
-      } catch (error) {
-        console.error('Error fetching data:', error);
-      } finally {
-        setIsLoading(false);
-      }
+    window.handleResponse = (sheetData) => {
+      console.log("Data received from Apps Script:", sheetData);
+      const formattedData = sheetData.map(row => ({
+        date: new Date(row.date.split('.').reverse().join('-')).toLocaleDateString('ru-RU'),
+        leads: Number(row.leads),
+        leadCost: Number(row.leadCost),
+        cr: Number(row.cr),
+        actual: Number(row.actual),
+        qualified: Number(row.qualified),
+        qualCost: Number(row.qualCost)
+      }));
+      setData(formattedData);
+      setLoading(false); // Данные загружены, отключаем прелоадер
     };
+
+    async function fetchData() {
+      const script = document.createElement('script');
+      script.src = 'https://script.google.com/macros/s/AKfycbxU8bDs7W_K1JxZWtmaZ39Dh2EObE0FDnqaff3vwVWjbPsXM1fRgTI4UMrSw6afpzMKLQ/exec?callback=handleResponse';
+      document.body.appendChild(script);
+    }
 
     fetchData();
   }, []);
 
-  // Обновляем обработчик выбора дат
-  const handleDateSelect = (range) => {
-    if (!range?.from || !range?.to) return;
-    
-    setDateRange(range);
-    
-    const fromDate = formatDate(range.from);
-    const toDate = formatDate(range.to);
-    
-    const filteredIndexes = data.reduce((acc, item, index) => {
-      const currentDate = item.date;
-      if (fromDate <= currentDate && currentDate <= toDate) {
-        if (acc.start === null) acc.start = index;
-        acc.end = index;
-      }
-      return acc;
-    }, { start: null, end: null });
-
-    if (filteredIndexes.start !== null && filteredIndexes.end !== null) {
-      setStartIdx(filteredIndexes.start);
-      setEndIdx(filteredIndexes.end);
-    }
-  };
-
-  const t = translations[lang];
+  const [dateRange, setDateRange] = useState({
+    from: new Date(),
+    to: new Date()
+  });
   const [startIdx, setStartIdx] = useState(0);
   const [endIdx, setEndIdx] = useState(data.length - 1);
   const [showAverage, setShowAverage] = useState(true);
   const [activeMetric, setActiveMetric] = useState('leads');
 
-  // Обновляем вычисление filteredData
+  useEffect(() => {
+    if (data.length > 0) {
+      const lastIndex = data.length - 1;
+      setStartIdx(0);
+      setEndIdx(lastIndex);
+      setDateRange({
+        from: new Date(data[0].date.split('.').reverse().join('-')),
+        to: new Date(data[lastIndex].date.split('.').reverse().join('-'))
+      });
+    }
+  }, [data]);
+
   const filteredData = useMemo(() => {
-    if (!data.length) return [];
+    if (data.length === 0) return [];
     
-    const fromDate = dateRange.from;
-    const toDate = dateRange.to;
+    const fromDate = new Date(dateRange.from);
+    const toDate = dateRange.to ? new Date(dateRange.to) : fromDate;
     
-    return data.filter(item => {
-      const itemDate = item.dateObj;
+    // Нормализуем даты для сравнения (устанавливаем время в 00:00:00)
+    fromDate.setHours(0, 0, 0, 0);
+    toDate.setHours(23, 59, 59, 999);
+  
+    return data.filter((item) => {
+      const itemDate = new Date(item.date.split('.').reverse().join('-'));
+      itemDate.setHours(0, 0, 0, 0);
       return itemDate >= fromDate && itemDate <= toDate;
     });
   }, [data, dateRange]);
 
-  // Получаем доступные даты из данных
-  const availableDates = useMemo(() => {
-    return data.map(item => item.dateObj);
-  }, [data]);
+  console.log("Filtered Data:", filteredData);
 
-  // Модифицируем календарь для отображения только доступных дат
-  const modifiedCalendar = (
-    <Calendar
-      mode="range"
-      selected={dateRange}
-      onSelect={handleDateSelect}
-      numberOfMonths={isMobile ? 1 : 2}
-      defaultMonth={dateRange.from}
-      disabled={{ before: availableDates[0], after: availableDates[availableDates.length - 1] }}
-      modifiers={{ disabled: date => !availableDates.some(d => d.getTime() === date.getTime()) }}
-      showOutsideDays={false}
-      components={{
-        NavigationButton: CalendarNavigationButton
-      }}
-      // ...rest of calendar props
-    />
-  );
+  const handleDateSelect = (range) => {
+    if (!range?.from) return;
+
+    const fromDate = new Date(range.from);
+    // Если to не указан, используем from
+    const toDate = range.to ? new Date(range.to) : fromDate;
+
+    // Форматируем даты в строки для сравнения
+    const fromDateStr = fromDate.toLocaleDateString('ru-RU');
+    const toDateStr = toDate.toLocaleDateString('ru-RU');
+
+    const startIndex = data.findIndex(item => item.date === fromDateStr);
+    const endIndex = range.to ? data.findIndex(item => item.date === toDateStr) : startIndex;
+
+    if (startIndex !== -1) {
+      setStartIdx(startIndex);
+      setEndIdx(endIndex !== -1 ? endIndex : startIndex);
+      setDateRange({
+        from: fromDate,
+        to: range.to || fromDate // Если to не указан, используем from
+      });
+    }
+  };
 
   const metrics = {
-    leads: { 
-      name: t.metrics.leads,
-      color: '#2563eb', 
+    leads: {
+      name: translations[lang].metrics.leads,
+      color: '#2563eb',
       icon: UserCog,
-      format: (val) => Math.round(val),
-      aggregateFormat: (total) => `${Math.round(total)}`
+      format: () => filteredData.reduce((sum, item) => sum + item.leads, 0) // Сумма лидов
     },
-    leadCost: { 
-      name: t.metrics.leadCost,
-      color: '#1d4ed8', 
+    leadCost: {
+      name: translations[lang].metrics.leadCost,
+      color: '#1d4ed8',
       icon: Calculator,
-      format: (val) => `₴${val.toFixed(2)}`,
-      aggregateFormat: (total) => ` ₴${total.toFixed(2)}`
+      format: () => {
+        const totalActual = filteredData.reduce((sum, item) => sum + item.actual, 0);
+        const totalLeads = filteredData.reduce((sum, item) => sum + item.leads, 0);
+        return totalLeads > 0 ? `₴${(totalActual / totalLeads).toFixed(2)}` : '₴0';
+      }
     },
-    cr: { 
-      name: t.metrics.cr,
-      color: '#1e40af', 
+    cr: {
+      name: translations[lang].metrics.cr,
+      color: '#1e40af',
       icon: BarChart,
-      format: (val) => `${Math.round(val)}%`,
-      aggregateFormat: (total) => ` ${Math.round(total)}%`
+      format: () => {
+        const totalLeads = filteredData.reduce((sum, item) => sum + item.leads, 0);
+        const totalQualified = filteredData.reduce((sum, item) => sum + item.qualified, 0);
+        return totalLeads > 0 ? `${((totalQualified / totalLeads) * 100).toFixed(1)}%` : '0%';
+      }
     },
-    actual: { 
-      name: t.metrics.actual,
-      color: '#1e3a8a', 
+    actual: {
+      name: translations[lang].metrics.actual,
+      color: '#1e3a8a',
       icon: Wallet,
-      format: (val) => `₴${val.toFixed(2)}`,
-      aggregateFormat: (total) => `₴${total.toFixed(2)}`
+      format: () => `₴${filteredData.reduce((sum, item) => sum + item.actual, 0).toFixed(2)}`
     },
     qualified: {
-      name: t.metrics.qualified,
+      name: translations[lang].metrics.qualified,
       color: '#172554',
       icon: UserCheck,
-      format: (val) => Math.round(val),
-      aggregateFormat: (total) => `${Math.round(total)}`
+      format: () => filteredData.reduce((sum, item) => sum + item.qualified, 0) // Сумма квалификаций
     },
-    qualCost: { 
-      name: t.metrics.qualCost,
-      color: '#0f172a', 
+    qualCost: {
+      name: translations[lang].metrics.qualCost,
+      color: '#0f172a',
       icon: DollarSign,
-      format: (val) => `₴${val.toFixed(2)}`,
-      aggregateFormat: (total) => `₴${total.toFixed(2)}`
+      format: () => {
+        const totalActual = filteredData.reduce((sum, item) => sum + item.actual, 0);
+        const totalQualified = filteredData.reduce((sum, item) => sum + item.qualified, 0);
+        return totalQualified > 0 ? `₴${(totalActual / totalQualified).toFixed(2)}` : '₴0';
+      }
     }
   };
 
@@ -350,40 +311,23 @@ const MetricsDashboard = () => {
     return data.reduce((sum, item) => sum + item[key], 0) / data.length;
   };
 
-  // Добавляем обработку состояния загрузки в рендер
-  if (isLoading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-      </div>
-    );
-  }
-
-  // Обновляем получение значений для метрик с учетом суммирования
-  const getMetricValues = (metricKey) => {
-    if (!filteredData.length) return { latest: 0, previous: 0, total: 0 };
-    
-    // Получаем сумму значений за выбранный период
-    const total = sumMetricValues(filteredData, metricKey);
-    
-    // Получаем последнее и предпоследнее значения для процентного изменения
-    const latest = filteredData[filteredData.length - 1][metricKey];
-    const previous = filteredData.length > 1 
-      ? filteredData[filteredData.length - 2][metricKey]
-      : latest;
-      
-    return { latest, previous, total };
+  const changeLanguage = (lng) => {
+    setLang(lng);
   };
 
+  if (loading) {
+    return <div>Loading...</div>; // Прелоадер
+  }
+
   return (
-    <div className={`container space-y-4 p-2 sm:p-6 rounded-xl ${isMobile ? 'pt-6 pb-6' : ''}`}>
+    <div className="container space-y-4 p-2 sm:p-6 rounded-xl">
       <div className="flex justify-between items-center">
-        <h1 className={`font-bold ${isMobile ? 'text-lg' : 'text-2xl'}`}>{t.title}</h1>
+        <h1 className={`font-bold ${isMobile ? 'text-lg' : 'text-2xl'}`}>{translations[lang].title}</h1>
         <div className="flex items-center gap-2 bg-blue-50 p-2 rounded-lg">
           <Globe className="w-4 h-4 text-blue-600" />
           <select 
             value={lang}
-            onChange={(e) => setLang(e.target.value)}
+            onChange={(e) => changeLanguage(e.target.value)}
             className="bg-transparent border-none text-sm focus:outline-none text-blue-600"
           >
             <option value="en" className="text-black">EN</option>
@@ -393,35 +337,19 @@ const MetricsDashboard = () => {
         </div>
       </div>
 
-      <div className={`bg-white/80 backdrop-blur shadow-lg rounded-lg p-4 ${isMobile ? 'pt-6 pb-6' : ''}`}>
-        <div className="pb-4 flex justify-between items-center flex-wrap gap-4">
-          <DatePickerWithRange 
-            dateRange={dateRange}
-            onSelect={handleDateSelect}
-            isMobile={isMobile}
-          />
-          
-          <div className="flex items-center gap-2">
-            <label className="text-sm text-gray-600">{t.average}:</label>
-            <input
-              type="checkbox"
-              checked={showAverage}
-              onChange={(e) => setShowAverage(e.target.checked)}
-              className="rounded border-gray-300"
-            />
-          </div>
-        </div>
-
-        <div className={`grid ${isMobile ? 'grid-cols-2' : 'grid-cols-6'} gap-4 mt-6`}>
-          {Object.entries(metrics).map(([key, { name, color, icon: Icon, format, aggregateFormat }]) => {
-            const { latest: latestValue, previous: previousValue, total } = getMetricValues(key);
+      <div className="bg-white/80 backdrop-blur shadow-lg rounded-lg p-4">
+        {/* Метрики перемещаем наверх */}
+        <div className={`grid ${isMobile ? 'grid-cols-2' : 'grid-cols-6'} gap-4 mb-6`}>
+          {Object.entries(metrics).map(([key, { name, color, icon: Icon, format }]) => {
+            const latestValue = filteredData[filteredData.length - 1]?.[key] ?? 0;
+            const previousValue = filteredData[filteredData.length - 2]?.[key] ?? latestValue;
             const change = latestValue && previousValue 
               ? ((latestValue - previousValue) / previousValue * 100).toFixed(1) 
               : 0;
             const isPositive = change > 0;
             
             return (
-              <div key={key} className="bg-white/80 backdrop-blur hover:scale-105 transition-transform rounded-lg">
+              <div key={key} className="block bg-white/80 backdrop-blur hover:scale-105 transition-transform rounded-lg">
                 <div className={isMobile ? 'p-3' : 'p-6'}>
                   <div className="flex items-center justify-between">
                     <div className="p-2 rounded-lg" style={{ backgroundColor: `${color}15` }}>
@@ -435,25 +363,18 @@ const MetricsDashboard = () => {
                   <div className="mt-4">
                     <div className={`${isMobile ? 'text-xs' : 'text-sm'} text-gray-500`}>{name}</div>
                     <div className={`${isMobile ? 'text-lg' : 'text-xl'} font-bold mt-1`} style={{ color }}>
-                      {aggregateFormat(total)}
+                      {format()} {/* Агрегированное значение */}
                     </div>
                     <div className={`${isMobile ? 'text-xs' : 'text-sm'} mt-1 ${isPositive ? 'text-green-600' : 'text-red-600'}`}>
                       {isPositive ? '↑' : '↓'} {Math.abs(change)}%
                     </div>
-                    <div className="mt-2">
-                      <ResponsiveContainer width="100%" height={isMobile ? 50 : 75}>
-                        <LineChart data={filteredData}>
-                          <XAxis dataKey="date" hide />
-                          <YAxis hide />
-                          <Line
-                            type="monotone"
-                            dataKey={key}
-                            stroke={color}
-                            strokeWidth={1.5}
-                            dot={false}
-                          />
-                        </LineChart>
-                      </ResponsiveContainer>
+                    {/* Добавляем мини-график */}
+                    <div className="h-8 mt-2">
+                      <SparkLine 
+                        data={filteredData.slice(-7)} 
+                        dataKey={key} 
+                        color={color} 
+                      />
                     </div>
                   </div>
                 </div>
@@ -462,7 +383,25 @@ const MetricsDashboard = () => {
           })}
         </div>
 
-        <div className="space-y-6 mt-6">
+        <div className="pb-4 flex justify-between items-center flex-wrap gap-4">
+          <DatePickerWithRange 
+            dateRange={dateRange}
+            onSelect={handleDateSelect}
+            isMobile={isMobile}
+          />
+          
+          <div className="flex items-center gap-2">
+            <label className="text-sm text-gray-600">{translations[lang].average}:</label>
+            <input
+              type="checkbox"
+              checked={showAverage}
+              onChange={(e) => setShowAverage(e.target.checked)}
+              className="rounded border-gray-300"
+            />
+          </div>
+        </div>
+
+        <div className="space-y-6">
           <div className={`bg-blue-50 p-1 rounded-lg flex flex-wrap gap-1 ${isMobile ? 'justify-between' : ''}`}>
             {Object.entries(metrics).map(([key, { name, icon: Icon }]) => (
               <button
@@ -506,10 +445,6 @@ const MetricsDashboard = () => {
             </ResponsiveContainer>
           </div>
         </div>
-      </div>
-
-      <div className="text-center text-sm text-gray-500">
-        {t.madeIn} <span className="font-semibold text-blue-600">OZDO AI</span>
       </div>
     </div>
   );
