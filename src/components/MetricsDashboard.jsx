@@ -4,7 +4,7 @@ import {
   Tooltip, Legend, ResponsiveContainer, ReferenceLine 
 } from 'recharts';
 import { Calendar } from './ui/Calendar';
-import { Popover, PopoverContent, PopoverTrigger } from '/workspaces/new06_dashboard/src/components/ui/popover.jsx';
+import { Popover, PopoverContent, PopoverTrigger } from './ui/popover'; // Обновленный импорт
 import { 
   ArrowUpRight, ArrowDownRight, DollarSign,
   UserCheck, Calculator, BarChart,
