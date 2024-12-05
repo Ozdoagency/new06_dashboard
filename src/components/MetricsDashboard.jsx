@@ -238,7 +238,7 @@ const MetricsDashboard = ({ initialData = [] }) => {
     // Если to не указан, используем from
     const toDate = range.to ? new Date(range.to) : fromDate;
 
-    // Форматируем даты в строки для сравнения
+    // Форматируем даты в строки для сравнени��
     const fromDateStr = fromDate.toLocaleDateString('ru-RU');
     const toDateStr = toDate.toLocaleDateString('ru-RU');
 
@@ -349,7 +349,16 @@ const MetricsDashboard = ({ initialData = [] }) => {
       </div>
 
       <div className="bg-white/80 backdrop-blur shadow-lg rounded-lg p-4">
-        {/* Метрики перемещаем наверх */}
+        {/* Перемещаем выбор даты наверх */}
+        <div className="pb-4 flex justify-between items-center flex-wrap gap-4 mb-6">
+          <DatePickerWithRange 
+            dateRange={dateRange}
+            onSelect={handleDateSelect}
+            isMobile={isMobile}
+          />
+        </div>
+
+        {/* Метрики */}
         <div className={`grid ${isMobile ? 'grid-cols-2' : 'grid-cols-6'} gap-4 mb-6`}>
           {Object.entries(metrics).map(([key, { name, color, icon: Icon, format }]) => {
             const latestValue = filteredData[filteredData.length - 1]?.[key] ?? 0;
@@ -394,24 +403,6 @@ const MetricsDashboard = ({ initialData = [] }) => {
           })}
         </div>
 
-        <div className="pb-4 flex justify-between items-center flex-wrap gap-4">
-          <DatePickerWithRange 
-            dateRange={dateRange}
-            onSelect={handleDateSelect}
-            isMobile={isMobile}
-          />
-          
-          <div className="flex items-center gap-2">
-            <label className="text-sm text-gray-600">{translations[lang].average}:</label>
-            <input
-              type="checkbox"
-              checked={showAverage}
-              onChange={(e) => setShowAverage(e.target.checked)}
-              className="rounded border-gray-300"
-            />
-          </div>
-        </div>
-
         <div className="space-y-6">
           <div className={`bg-blue-50 p-1 rounded-lg flex flex-wrap gap-1 ${isMobile ? 'justify-between' : ''}`}>
             {Object.entries(metrics).map(([key, { name, icon: Icon }]) => (
@@ -428,6 +419,17 @@ const MetricsDashboard = ({ initialData = [] }) => {
                 <span className={isMobile ? 'text-xs' : 'text-sm'}>{name}</span>
               </button>
             ))}
+          </div>
+          
+          {/* Перемещенный Average чекбокс */}
+          <div className="flex justify-end items-center gap-2 mb-2">
+            <label className="text-sm text-gray-600">{translations[lang].average}:</label>
+            <input
+              type="checkbox"
+              checked={showAverage}
+              onChange={(e) => setShowAverage(e.target.checked)}
+              className="rounded border-gray-300"
+            />
           </div>
           
           <div className={isMobile ? 'h-64' : 'h-96'}>
