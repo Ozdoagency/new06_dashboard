@@ -37,7 +37,7 @@ const translations = {
     max: 'max',
     madeIn: 'Made in'
   },
-  uk: {
+  ua: {
     title: 'Панель метрик',
     average: 'Середнє',
     metrics: {
@@ -162,7 +162,7 @@ const sumMetricValues = (data, metric) => {
 const MetricsDashboard = () => {
   const [data, setData] = useState([]);
   const [width, setWidth] = useState(() => (typeof window !== 'undefined' ? window.innerWidth : 0));
-  const [lang, setLang] = useState('ru');
+  const [lang, setLang] = useState('ua');
   const isMobile = useMemo(() => width < 768, [width]);
 
   // Изменяем начальные даты на первый и последний день текущего месяца
@@ -387,7 +387,7 @@ const MetricsDashboard = () => {
             className="bg-transparent border-none text-sm focus:outline-none text-blue-600"
           >
             <option value="en" className="text-black">EN</option>
-            <option value="uk" className="text-black">UK</option>
+            <option value="ua" className="text-black">UA</option>
             <option value="ru" className="text-black">RU</option>
           </select>
         </div>
