@@ -1,0 +1,65 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@keyframes gradientBackground {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.dynamic-gradient {
+  background: linear-gradient(270deg, #f7fafc, #e2e8f0, #ebf8ff, #f7fafc, #e2e8f0, #ebf8ff);
+  background-size: 500% 500%;
+  animation: gradientBackground 15s ease infinite;
+}
+
+.container {
+  @apply dynamic-gradient;
+  width: 100%;
+  max-width: 100%;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+.custom-input {
+  @apply border-blue-500 rounded-md p-2 text-sm text-gray-700;
+}
+
+.custom-input:focus {
+  @apply border-blue-700 ring-2 ring-blue-300;
+}
+
+.custom-dropdown {
+  @apply bg-gray-100 border border-gray-300 rounded-md shadow-lg;
+}
+
+.custom-day {
+  @apply p-2 rounded-md text-sm text-gray-700;
+}
+
+.custom-day:hover {
+  @apply bg-gray-200;
+}
+
+.custom-day[data-selected] {
+  @apply bg-blue-500 text-white;
+}
+
+@media (max-width: 767px) {
+  .container {
+    padding-top: 2rem;
+    padding-bottom: 2rem;
+    min-height: 100vh; /* Добавлено для растягивания на весь экран по высоте */
+  }
+  .mobile-padding {
+    padding-top: 0rem;
+    padding-bottom: 0rem;
+  }
+}
