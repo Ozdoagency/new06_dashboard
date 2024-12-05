@@ -12,22 +12,10 @@ export default defineConfig({
   build: {
     rollupOptions: {
       external: [
+        '/src/components/ErrorBoundary.jsx',
         '/src/components/MetricsDashboard.jsx',
         // Добавьте другие внешние зависимости, если необходимо
       ],
     },
   },
-  content: [
-    "./index.html",
-    "./src/**/*.{js,ts,jsx,tsx}",
-  ],
-  theme: {
-    extend: {
-      colors: {
-        'card': 'white',
-        'card-foreground': 'black',
-      }
-    },
-  },
-  plugins: [],
 });
