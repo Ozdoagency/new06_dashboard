@@ -5,6 +5,7 @@ import {
 } from 'recharts';
 import { Calendar } from './ui/Calendar';
 import { Popover, PopoverContent, PopoverTrigger } from './ui/popover';
+import CampaignsTable from '/workspaces/new06_dashboard/src/components/ui/CampaignsTable.jsx';
 import { 
   ArrowUpRight, ArrowDownRight, DollarSign,
   UserCheck, Calculator, BarChart,
@@ -238,7 +239,7 @@ const MetricsDashboard = ({ initialData = [] }) => {
     // Если to не указан, используем from
     const toDate = range.to ? new Date(range.to) : fromDate;
 
-    // Форматируем даты в строки для сравнени��
+    // Форматируем даты в строки для сравнения
     const fromDateStr = fromDate.toLocaleDateString('ru-RU');
     const toDateStr = toDate.toLocaleDateString('ru-RU');
 
@@ -330,6 +331,55 @@ const MetricsDashboard = ({ initialData = [] }) => {
     );
   }
 
+  // Приклад даних для таблиці кампаній
+  const campaignsData = [
+    {
+      name: "Ozdo | Leadform | Video | Europe 0710",
+      status: "Активно",
+      attribution: "7 дн. після кліку або 1 дн. після перегляду",
+      result: "50 Ліди на Facebook",
+      reach: "18 103",
+      frequency: "2.17",
+      cost: "311,75 грн",
+    },
+    {
+      name: "Ozdo | Leadform | Video | EU 2810",
+      status: "Неактивно",
+      attribution: "7 дн. після кліку або 1 дн. після перегляду",
+      result: "36 Ліди на Facebook",
+      reach: "29 708",
+      frequency: "1.46",
+      cost: "323,60 грн",
+    },
+    {
+      name: "Ozdo | Leadform | Video | EU 1911",
+      status: "Неактивно",
+      attribution: "7 дн. після кліку або 1 дн. після перегляду",
+      result: "25 Ліди на Facebook",
+      reach: "21 552",
+      frequency: "1.44",
+      cost: "386,15 грн",
+    },
+    {
+      name: "Ozdo | Leadform | Video | EU 2411 old Кампанія",
+      status: "Неактивно",
+      attribution: "7 дн. після кліку або 1 дн. після перегляду",
+      result: "2 Ліди на Facebook",
+      reach: "4 620",
+      frequency: "1.24",
+      cost: "943,33 грн",
+    },
+    {
+      name: "Ozdo | Leadform | Video | EU 05.12",
+      status: "Активно",
+      attribution: "7 дн. після кліку або 1 дн. після перегляду",
+      result: "-",
+      reach: "247",
+      frequency: "1.01",
+      cost: "-",
+    },
+  ];
+
   return (
     <div className="container space-y-4 p-2 sm:p-6 rounded-xl">
       <div className="flex justify-between items-center">
@@ -350,7 +400,7 @@ const MetricsDashboard = ({ initialData = [] }) => {
 
       <div className="bg-white/80 backdrop-blur shadow-lg rounded-lg p-4">
         {/* Перемещаем выбор даты наверх */}
-        <div className="pb-4 flex justify-between items-center flex-wrap gap-4 mb-6">
+        <div className="pb-4 flex justify-between items-center flex-wrap gap-14 mb-2">
           <DatePickerWithRange 
             dateRange={dateRange}
             onSelect={handleDateSelect}
@@ -458,6 +508,12 @@ const MetricsDashboard = ({ initialData = [] }) => {
             </ResponsiveContainer>
           </div>
         </div>
+      </div>
+
+      {/* Таблица кампаний */}
+      <div className="mt-8">
+        <h2 className="text-xl font-semibold mb-4">Таблица кампаний</h2>
+        <CampaignsTable campaigns={campaignsData} />
       </div>
     </div>
   );

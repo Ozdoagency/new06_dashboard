@@ -35,6 +35,24 @@
   }
 }
 
+@keyframes gradientAnimation {
+  0% {
+    background-position: 0% 50%;
+  }
+  25% {
+    background-position: 50% 100%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  75% {
+    background-position: 50% 0%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
 .dynamic-gradient {
   background: linear-gradient(270deg, #f7fafc, #e2e8f0, #ebf8ff, #f7fafc, #e2e4f0, #ebf8ff);
   background-size: 500% 500%;
@@ -42,7 +60,7 @@
 }
 
 .animate-spin-slow {
-  animation: spin-slow 3s linear infinite;
+  animation: spin-slow 6s linear infinite;
 }
 
 .rotate-x-45 {
@@ -67,12 +85,25 @@
   perspective: 1000px;
 }
 
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  overflow: auto; /* Убедитесь, что переполнение не скрыто */
+}
+
+body {
+  background: linear-gradient(45deg, #fdeef4, #ffffff, #e3f8ff, #c0e8f6, #fdeef4);
+  background-size: 400% 400%;
+  animation: gradientAnimation 15s ease-in-out infinite;
+}
+
 .container {
-  @apply dynamic-gradient;
   width: 100%;
   max-width: 100%;
   margin: 0 auto;
   padding: 0 1rem;
+  @apply dynamic-gradient;
 }
 
 .custom-input {
@@ -108,5 +139,54 @@
   .mobile-padding {
     padding-top: 0rem;
     padding-bottom: 0rem;
+  }
+}
+
+/* Обновленные стили в index.css */
+/* Удалить старые стили таблицы и добавить новые */
+
+.table-auto {
+  border-spacing: 0;
+  border-collapse: separate;
+}
+
+.table-auto thead th {
+  background-color: rgba(239, 246, 255, 0.5);
+  backdrop-filter: blur(8px);
+  font-weight: 600;
+  letter-spacing: 0.025em;
+}
+
+.table-auto tbody tr {
+  transition: all 0.2s ease;
+}
+
+.table-auto tbody tr:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.table-auto td, .table-auto th {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+@media (max-width: 640px) {
+  .overflow-x-auto {
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE and Edge */
+  }
+  
+  .overflow-x-auto::-webkit-scrollbar {
+    display: none; /* Chrome, Safari and Opera */
+  }
+  
+  .table-auto td, .table-auto th {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 200px;
   }
 }
