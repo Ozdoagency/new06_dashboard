@@ -21,7 +21,19 @@ i18n
           },
           min: 'min',
           max: 'max',
-          madeIn: 'Made in'
+          madeIn: 'Made in',
+          table: {
+            campaignName: 'Campaign Name',
+            status: 'Status',
+            result: 'Result',
+            reach: 'Reach',
+            leadCost: 'Lead Cost',
+            qualAmount: 'Qual Amount',
+            qualCost: 'Qual Cost',
+            active: 'Active',
+            inactive: 'Inactive',
+            leads: 'Leads'
+          }
         }
       },
       ua: {
@@ -38,7 +50,19 @@ i18n
           },
           min: 'мін',
           max: 'макс',
-          madeIn: 'Зроблено в'
+          madeIn: 'Зроблено в',
+          table: {
+            campaignName: 'Назва кампанії',
+            status: 'Статус',
+            result: 'Результат',
+            reach: 'Охоплення',
+            leadCost: 'Вартість ліда',
+            qualAmount: 'Кількість квалів',
+            qualCost: 'Ціна квала',
+            active: 'Активний',
+            inactive: 'Неактивний',
+            leads: 'Ліди'
+          }
         }
       },
       ru: {
@@ -55,7 +79,19 @@ i18n
           },
           min: 'мин',
           max: 'макс',
-          madeIn: 'Сделано в'
+          madeIn: 'Сделано в',
+          table: {
+            campaignName: 'Название кампании',
+            status: 'Статус',
+            result: 'Результат',
+            reach: 'Охват',
+            leadCost: 'Стоимость лида',
+            qualAmount: 'Количество квалов',
+            qualCost: 'Цена квала',
+            active: 'Активный',
+            inactive: 'Неактивный',
+            leads: 'Лиды'
+          }
         }
       }
     },

@@ -9,7 +9,7 @@ import CampaignsTable from './ui/CampaignsTable';
 import { 
   ArrowUpRight, ArrowDownRight, DollarSign,
   UserCheck, Calculator, BarChart,
-  Wallet, UserCog, ChevronLeft, ChevronRight, Globe
+  Wallet, UserCog, ChevronLeft, ChevronRight, Globe, ChevronDown
 } from 'lucide-react';
 
 // Функция форматирования даты (перемещена в начало файла)
@@ -36,10 +36,29 @@ const translations = {
     },
     min: 'min',
     max: 'max',
-    madeIn: 'Made in'
+    madeIn: 'Made in',
+    madeWith: 'Made with love in ',
+    company: 'Ozdo AI',
+    trafficSource: 'Traffic Source',
+    optimizationType: 'Optimization Type',
+    leads: 'Leads',
+    messages: 'Messages',
+    table: {
+      title: 'Campaigns Table',
+      campaignName: 'Campaign Name',
+      status: 'Status',
+      result: 'Result',
+      reach: 'Reach',
+      leadCost: 'Lead Cost',
+      qualAmount: 'Qual Amount',
+      qualCost: 'Qual Cost',
+      active: 'Active',
+      inactive: 'Inactive',
+      leads: 'Leads'
+    }
   },
   ua: {
-    title: 'Панель метрик',
+    title: 'Панель Метрик',
     average: 'Середнє',
     metrics: {
       leads: 'Тех ліди',
@@ -51,7 +70,26 @@ const translations = {
     },
     min: 'мін',
     max: 'макс',
-    madeIn: 'Зроблено в'
+    madeIn: 'Зроблено в',
+    madeWith: 'Зроблено з любов\'ю в ',
+    company: 'Ozdo AI',
+    trafficSource: 'Джерело трафіку',
+    optimizationType: 'Тип оптимізації',
+    leads: 'Ліди',
+    messages: 'Повідомлення',
+    table: {
+      title: 'Таблиця кампаній',
+      campaignName: 'Назва кампанії',
+      status: 'Статус',
+      result: 'Результат',
+      reach: 'Охоплення',
+      leadCost: 'Ціна ліда',
+      qualAmount: 'Кількість квалу',
+      qualCost: 'Ціна квалу',
+      active: 'Активно',
+      inactive: 'Неактивно',
+      leads: 'Ліди'
+    }
   },
   ru: {
     title: 'Панель метрик',
@@ -66,7 +104,26 @@ const translations = {
     },
     min: 'мин',
     max: 'макс',
-    madeIn: 'Сделано в'
+    madeIn: 'Сделано в',
+    madeWith: 'Сделано с любовью в ',
+    company: 'Ozdo AI',
+    trafficSource: 'Источник трафика',
+    optimizationType: 'Тип оптимизации',
+    leads: 'Лиды',
+    messages: 'Сообщения',
+    table: {
+      title: 'Таблица кампаний',
+      campaignName: 'Название кампании',
+      status: 'Статус',
+      result: 'Результат',
+      reach: 'Охват',
+      leadCost: 'Цена лида',
+      qualAmount: 'Количество квалов',
+      qualCost: 'Цена квала',
+      active: 'Активно',
+      inactive: 'Неактивно',
+      leads: 'Лиды'
+    }
   }
 };
 
@@ -154,10 +211,12 @@ const SparkLine = ({ data, dataKey, color, height = 30 }) => (
 
 const MetricsDashboard = ({ initialData = [] }) => {
   const [lang, setLang] = useState('ua'); // Установите основной язык на украинский
-  const [data, setData] = useState(initialData); // Добавьте хук состояния для данных
+  const [data, setData] = useState(initialData); // Добавьте хук сост��яния для данных
   const [loading, setLoading] = useState(true); // Добавлено состояние для прелоадера
   const [width, setWidth] = useState(typeof window !== 'undefined' ? window.innerWidth : 0);
   const isMobile = useMemo(() => width < 768, [width]);
+  const [trafficSource, setTrafficSource] = useState('Facebook');
+  const [optimizationType, setOptimizationType] = useState('Лиды');
 
   useEffect(() => {
     const handleResize = () => setWidth(window.innerWidth);
@@ -180,7 +239,7 @@ const MetricsDashboard = ({ initialData = [] }) => {
         qualCost: Number(row.qualCost)
       }));
       setData(formattedData);
-      setLoading(false); // Данные загружены, отключаем прелоадер
+      setLoading(false); // Данные загружены, от��лючаем прелоадер
     };
 
     async function fetchData() {
@@ -219,7 +278,7 @@ const MetricsDashboard = ({ initialData = [] }) => {
     const fromDate = new Date(dateRange.from);
     const toDate = dateRange.to ? new Date(dateRange.to) : fromDate;
     
-    // Нормализуем даты для сравнения (устанавливаем время в 00:00:00)
+    // Нормализуем даты для сравнения (устанавливаем вр��мя в 00:00:00)
     fromDate.setHours(0, 0, 0, 0);
     toDate.setHours(23, 59, 59, 999);
   
@@ -336,48 +395,48 @@ const MetricsDashboard = ({ initialData = [] }) => {
     {
       name: "Ozdo | Leadform | Video | Europe 0710",
       status: "Активно",
-      attribution: "7 дн. після кліку або 1 дн. після перегляду",
-      result: "50 Ліди на Facebook",
+      result: "50 Ліди",
       reach: "18 103",
-      frequency: "2.17",
-      cost: "311,75 грн",
+      leadCost: "311,75 грн",
+      qualAmount: "25",
+      qualCost: "623,50 грн"
     },
     {
       name: "Ozdo | Leadform | Video | EU 2810",
       status: "Неактивно",
-      attribution: "7 дн. після кліку або 1 дн. після перегляду",
-      result: "36 Ліди на Facebook",
+      result: "36 Ліди",
       reach: "29 708",
-      frequency: "1.46",
-      cost: "323,60 грн",
+      leadCost: "323,60 грн",
+      qualAmount: "18",
+      qualCost: "647,20 грн"
     },
     {
       name: "Ozdo | Leadform | Video | EU 1911",
       status: "Неактивно",
-      attribution: "7 дн. після кліку або 1 дн. після перегляду",
-      result: "25 Ліди на Facebook",
+      result: "25 Ліди",
       reach: "21 552",
-      frequency: "1.44",
-      cost: "386,15 грн",
+      leadCost: "386,15 грн",
+      qualAmount: "12",
+      qualCost: "772,30 грн"
     },
     {
       name: "Ozdo | Leadform | Video | EU 2411 old Кампанія",
       status: "Неактивно",
-      attribution: "7 дн. після кліку або 1 дн. після перегляду",
-      result: "2 Ліди на Facebook",
+      result: "2 Ліди",
       reach: "4 620",
-      frequency: "1.24",
-      cost: "943,33 грн",
+      leadCost: "943,33 грн",
+      qualAmount: "1",
+      qualCost: "1886,66 грн"
     },
     {
       name: "Ozdo | Leadform | Video | EU 05.12",
       status: "Активно",
-      attribution: "7 дн. після кліку або 1 дн. після перегляду",
       result: "-",
       reach: "247",
-      frequency: "1.01",
-      cost: "-",
-    },
+      leadCost: "-",
+      qualAmount: "-",
+      qualCost: "-"
+    }
   ];
 
   return (
@@ -398,14 +457,82 @@ const MetricsDashboard = ({ initialData = [] }) => {
         </div>
       </div>
 
-      <div className="bg-white/80 backdrop-blur shadow-lg rounded-lg p-4">
+      <div className="bg-white/80 backdrop-blur shadow-[0_4px_20px_-4px_rgba(0,0,0,0.1)] rounded-lg p-4">
         {/* Перемещаем выбор даты наверх */}
-        <div className="pb-4 flex justify-between items-center flex-wrap gap-14 mb-2">
-          <DatePickerWithRange 
-            dateRange={dateRange}
-            onSelect={handleDateSelect}
-            isMobile={isMobile}
-          />
+        <div className="md:pb-4 md:flex md:flex-wrap md:gap-4">
+          <div className="overflow-x-auto flex gap-3 pb-4 md:pb-0 no-scrollbar -mx-4 px-4 md:mx-0 md:px-0 md:flex-wrap">
+            <div className="flex-none">
+              <DatePickerWithRange 
+                dateRange={dateRange}
+                onSelect={handleDateSelect}
+                isMobile={isMobile}
+              />
+            </div>
+            
+            {/* Источник трафика */}
+            <div className="flex-none">
+              <Popover>
+                <PopoverTrigger asChild>
+                  <button className="px-4 py-2 rounded-lg text-sm bg-blue-50 text-blue-600 hover:bg-blue-100 flex items-center gap-2 whitespace-nowrap">
+                    {trafficSource}
+                    <ChevronDown className="w-4 h-4" />
+                  </button>
+                </PopoverTrigger>
+                <PopoverContent className="w-48 p-2 bg-white rounded-lg shadow-lg">
+                  <div className="space-y-2">
+                    <button
+                      className={`w-full px-4 py-2 text-left rounded-md text-sm ${
+                        trafficSource === 'Facebook' ? 'bg-blue-50 text-blue-600' : 'hover:bg-gray-50'
+                      }`}
+                      onClick={() => setTrafficSource('Facebook')}
+                    >
+                      Facebook
+                    </button>
+                    <button
+                      className={`w-full px-4 py-2 text-left rounded-md text-sm ${
+                        trafficSource === 'Instagram' ? 'bg-blue-50 text-blue-600' : 'hover:bg-gray-50'
+                      }`}
+                      onClick={() => setTrafficSource('Instagram')}
+                    >
+                      Instagram
+                    </button>
+                  </div>
+                </PopoverContent>
+              </Popover>
+            </div>
+          
+            {/* Тип оптимизации */}
+            <div className="flex-none">
+              <Popover>
+                <PopoverTrigger asChild>
+                  <button className="px-4 py-2 rounded-lg text-sm bg-blue-50 text-blue-600 hover:bg-blue-100 flex items-center gap-2 whitespace-nowrap">
+                    {optimizationType}
+                    <ChevronDown className="w-4 h-4" />
+                  </button>
+                </PopoverTrigger>
+                <PopoverContent className="w-48 p-2 bg-white rounded-lg shadow-lg">
+                  <div className="space-y-2">
+                    <button
+                      className={`w-full px-4 py-2 text-left rounded-md text-sm ${
+                        optimizationType === 'Лиды' ? 'bg-blue-50 text-blue-600' : 'hover:bg-gray-50'
+                      }`}
+                      onClick={() => setOptimizationType('Лиды')}
+                    >
+                      {translations[lang].leads}
+                    </button>
+                    <button
+                      className={`w-full px-4 py-2 text-left rounded-md text-sm ${
+                        optimizationType === 'Сообщения' ? 'bg-blue-50 text-blue-600' : 'hover:bg-gray-50'
+                      }`}
+                      onClick={() => setOptimizationType('Сообщения')}
+                    >
+                      {translations[lang].messages}
+                    </button>
+                  </div>
+                </PopoverContent>
+              </Popover>
+            </div>
+          </div>
         </div>
 
         {/* Метрики */}
@@ -512,8 +639,14 @@ const MetricsDashboard = ({ initialData = [] }) => {
 
       {/* Таблица кампаний */}
       <div className="mt-8">
-        <h2 className="text-xl font-semibold mb-4">Таблица кампаний</h2>
+        <h2 className="text-xl font-semibold mb-4">{translations[lang].table.title}</h2>
         <CampaignsTable campaigns={campaignsData} />
+      </div>
+
+      {/* Футер */}
+      <div className="mt-8 text-center text-sm text-gray-500">
+        {translations[lang].madeWith}
+        <span className="font-bold">{translations[lang].company}</span>
       </div>
     </div>
   );

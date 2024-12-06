@@ -190,3 +190,17 @@ body {
     max-width: 200px;
   }
 }
+
+/* Добавить в index.css */
+@layer utilities {
+  /* Скрыть скролл-бар для Chrome, Safari и Opera */
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  
+  /* Скрыть скролл-бар для IE, Edge и Firefox */
+  .no-scrollbar {
+    -ms-overflow-style: none;  /* IE и Edge */
+    scrollbar-width: none;  /* Firefox */
+  }
+}
