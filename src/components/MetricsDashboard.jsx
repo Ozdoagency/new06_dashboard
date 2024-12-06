@@ -5,7 +5,7 @@ import {
 } from 'recharts';
 import { Calendar } from './ui/Calendar';
 import { Popover, PopoverContent, PopoverTrigger } from './ui/popover';
-import CampaignsTable from '/workspaces/new06_dashboard/src/components/ui/CampaignsTable.jsx';
+import CampaignsTable from './ui/CampaignsTable';
 import { 
   ArrowUpRight, ArrowDownRight, DollarSign,
   UserCheck, Calculator, BarChart,
