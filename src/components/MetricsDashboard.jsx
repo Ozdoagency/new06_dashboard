@@ -211,7 +211,7 @@ const SparkLine = ({ data, dataKey, color, height = 30 }) => (
 
 const MetricsDashboard = ({ initialData = [] }) => {
   const [lang, setLang] = useState('ua'); // Установите основной язык на украинский
-  const [data, setData] = useState(initialData); // Добавьте хук сост��яния для данных
+  const [data, setData] = useState(initialData); // Добавьте хук состояния для данных
   const [loading, setLoading] = useState(true); // Добавлено состояние для прелоадера
   const [width, setWidth] = useState(typeof window !== 'undefined' ? window.innerWidth : 0);
   const isMobile = useMemo(() => width < 768, [width]);
@@ -239,7 +239,7 @@ const MetricsDashboard = ({ initialData = [] }) => {
         qualCost: Number(row.qualCost)
       }));
       setData(formattedData);
-      setLoading(false); // Данные загружены, от��лючаем прелоадер
+      setLoading(false); // Данные загружены, отключаем прелоадер
     };
 
     async function fetchData() {
@@ -278,7 +278,7 @@ const MetricsDashboard = ({ initialData = [] }) => {
     const fromDate = new Date(dateRange.from);
     const toDate = dateRange.to ? new Date(dateRange.to) : fromDate;
     
-    // Нормализуем даты для сравнения (устанавливаем вр��мя в 00:00:00)
+    // Нормализуем даты для сравнения (устанавливаем время в 00:00:00)
     fromDate.setHours(0, 0, 0, 0);
     toDate.setHours(23, 59, 59, 999);
   
@@ -346,7 +346,7 @@ const MetricsDashboard = ({ initialData = [] }) => {
       name: translations[lang].metrics.actual,
       color: '#1e3a8a',
       icon: Wallet,
-      format: () => `₴${filteredData.reduce((sum, item) => sum + item.actual, 0).toFixed(2)}`
+      format: () => `${filteredData.reduce((sum, item) => sum + item.actual, 0).toFixed(2)}`
     },
     qualified: {
       name: translations[lang].metrics.qualified,
@@ -640,7 +640,7 @@ const MetricsDashboard = ({ initialData = [] }) => {
       {/* Таблица кампаний */}
       <div className="mt-8">
         <h2 className="text-xl font-semibold mb-4">{translations[lang].table.title}</h2>
-        <CampaignsTable campaigns={campaignsData} />
+        <CampaignsTable campaigns={campaignsData} currentLang={lang} />
       </div>
 
       {/* Футер */}
