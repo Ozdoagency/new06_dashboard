@@ -74,7 +74,7 @@ const translations = {
     madeIn: 'Зроблено в',
     madeWith: 'Зроблено з любов\'ю в ',
     company: 'Ozdo AI',
-    trafficSource: 'Джерело трафіку',
+    trafficSource: 'Джерело трафку',
     optimizationType: 'Тип оптимізації',
     leads: 'Ліди',
     messages: 'Повідомлення',

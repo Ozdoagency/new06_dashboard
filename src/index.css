@@ -208,6 +208,46 @@ body {
   .hide-scrollbar::-webkit-scrollbar {
     display: none;
   }
+
+  .campaign-card {
+    @apply bg-white/80 backdrop-blur p-4 rounded-xl shadow-sm border border-gray-100/50;
+  }
+
+  .campaign-card-header {
+    @apply flex items-start justify-between mb-4;
+  }
+
+  .campaign-card-title {
+    @apply font-medium text-sm text-gray-900 leading-tight max-w-[70%];
+  }
+
+  .campaign-card-status {
+    @apply shrink-0 px-3 py-1 rounded-full text-xs font-medium inline-flex items-center gap-1;
+  }
+
+  .campaign-card-status-active {
+    @apply bg-green-50 text-green-700;
+  }
+
+  .campaign-card-status-inactive {
+    @apply bg-red-50 text-red-700;
+  }
+
+  .campaign-card-metrics {
+    @apply grid grid-cols-2 gap-3 w-full;
+  }
+
+  .campaign-card-metric {
+    @apply bg-gray-50/50 p-3 rounded-lg;
+  }
+
+  .campaign-card-metric-label {
+    @apply text-xs text-gray-500 mb-1 flex items-center gap-1;
+  }
+
+  .campaign-card-metric-value {
+    @apply font-medium text-gray-900;
+  }
 }
 
 @media (min-width: 768px) {
@@ -372,4 +412,64 @@ body {
   .preview-container img {
     @apply rounded-t-xl w-full h-32 object-cover;
   }
+}
+
+/* Добавляем стили для мобильной версии */
+@media (max-width: 768px) {
+  .campaign-card {
+    @apply bg-white/80 backdrop-blur p-4 rounded-xl shadow-sm border border-gray-100/50;
+  }
+
+  .campaign-card-header {
+    @apply flex items-start justify-between mb-4;
+  }
+
+  .campaign-card-title {
+    @apply font-medium text-sm text-gray-900 leading-tight max-w-[70%];
+  }
+
+  .campaign-card-status {
+    @apply shrink-0 px-3 py-1 rounded-full text-xs font-medium inline-flex items-center gap-1;
+  }
+
+  .campaign-card-status-active {
+    @apply bg-green-50 text-green-700;
+  }
+
+  .campaign-card-status-inactive {
+    @apply bg-red-50 text-red-700;
+  }
+
+  .campaign-card-metrics {
+    @apply grid grid-cols-2 gap-3 w-full;
+  }
+
+  .campaign-card-metric {
+    @apply bg-gray-50 p-3 rounded-lg shadow-sm;
+  }
+
+  .campaign-card-metric-label {
+    @apply text-xs text-gray-500 mb-1 flex items-center gap-1;
+  }
+
+  .campaign-card-metric-value {
+    @apply font-medium text-lg text-gray-900;
+  }
+}
+
+/* Стили для десктопной версии */
+.table-container {
+  @apply rounded-xl overflow-hidden bg-white/95;
+  box-shadow: 0 4px 24px -8px rgba(0, 0, 0, 0.1);
+}
+
+.table-auto thead th {
+  @apply bg-blue-50/95 backdrop-blur-md text-gray-700 py-4 px-6;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.table-auto tbody tr {
+  @apply transition-all hover:bg-blue-50/95;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.03);
+  background: rgba(255, 255, 255, 0.9);
 }
