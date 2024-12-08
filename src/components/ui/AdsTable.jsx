@@ -341,7 +341,7 @@ const AdsTable = () => {
                 ? 'bg-blue-600 text-white shadow-lg transform scale-105' 
                 : 'bg-gray-100/80 backdrop-blur-sm text-gray-600 hover:bg-gray-200/80'}`}
           >
-            {filter === 'all' ? 'В��і креативи' : filter}
+            {filter === 'all' ? 'Вcі креативи' : filter}
           </button>
         ))}
       </div>
