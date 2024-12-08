@@ -140,6 +140,29 @@ body {
     padding-top: 0rem;
     padding-bottom: 0rem;
   }
+  .campaign-card {
+    width: 100%;
+    margin-bottom: 1rem;
+  }
+  .preview-container {
+    @apply w-full;
+  }
+  .preview-container img {
+    height: auto;
+    max-height: 200px; /* Ограничение высоты для мобильных устройств */
+  }
+  .preview-container .text-xs {
+    font-size: 12px; /* Уменьшение размера текста */
+  }
+  .preview-container .text-sm {
+    font-size: 14px; /* Уменьшение размера текста */
+  }
+  .preview-container .text-lg {
+    font-size: 16px; /* Уменьшение размера текста */
+  }
+  .preview-container .text-xl {
+    font-size: 18px; /* Уменьшение размера текста */
+  }
 }
 
 /* Стили для мобильной версии */
@@ -271,4 +294,82 @@ body {
 
 .preview-container:hover {
   @apply -translate-y-1;
+}
+
+/* Улучшенные стили для таблицы */
+.table-container {
+  @apply rounded-xl overflow-hidden bg-white/95;
+  box-shadow: 0 4px 24px -8px rgba(0, 0, 0, 0.1);
+}
+
+.table-auto thead th {
+  @apply bg-blue-50/95 backdrop-blur-md text-gray-700 py-4 px-6;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.table-auto tbody tr {
+  @apply transition-all hover:bg-blue-50/95;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.03);
+  background: rgba(255, 255, 255, 0.9);
+}
+
+.table-auto tbody tr:last-child {
+  border-bottom: none;
+}
+
+/* Улучшенные стили для карточек на мобильных */
+.mobile-card {
+  @apply bg-white/90 backdrop-blur-sm rounded-xl transition-all;
+  box-shadow: 0 4px 20px -4px rgba(0, 0, 0, 0.1);
+}
+
+.mobile-card:active {
+  transform: scale(0.98);
+}
+
+/* Улучшенные стили для модального окна */
+.modal-content {
+  @apply bg-white/95 backdrop-blur-xl rounded-2xl max-w-4xl w-full mx-auto;
+  box-shadow: 0 20px 48px -24px rgba(0, 0, 0, 0.2);
+}
+
+@media (max-width: 768px) {
+  .modal-content {
+    @apply rounded-none;
+    margin: 0;
+    min-height: 100vh;
+    max-height: 100vh;
+    overflow-y: auto;
+  }
+}
+
+/* Стили для метрик */
+.metric-card {
+  @apply bg-gray-50/80 backdrop-blur-sm rounded-xl p-4 transition-all;
+  border: 1px solid rgba(0, 0, 0, 0.03);
+}
+
+.metric-card:hover {
+  @apply bg-gray-50/95;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px -6px rgba(0, 0, 0, 0.1);
+}
+
+/* Медиа-запросы для мобильной версии */
+@media (max-width: 768px) {
+  .container {
+    @apply px-3;
+  }
+  
+  .mobile-grid {
+    @apply grid grid-cols-2 gap-3;
+  }
+  
+  .mobile-card {
+    @apply h-full flex flex-col;
+  }
+  
+  .preview-container img {
+    @apply rounded-t-xl w-full h-32 object-cover;
+  }
 }

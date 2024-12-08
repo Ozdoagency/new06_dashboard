@@ -25,6 +25,14 @@ const formatters = {
   }
 };
 
+// Компонент для метрик (перемещаем выше основного компонента)
+const MetricCard = ({ label, value }) => (
+  <div className="bg-gray-50 p-4 rounded-lg transition-all hover:bg-gray-100">
+    <div className="text-sm text-gray-500">{label}</div>
+    <div className="text-lg font-semibold">{value}</div>
+  </div>
+);
+
 const AdsTable = () => {
   const [selectedAd, setSelectedAd] = useState(null);
   const [activeFilter, setActiveFilter] = useState('all');
@@ -107,7 +115,7 @@ const AdsTable = () => {
     }
   };
 
-  // Безопасная функция для форматирования с разделителями
+  // Безопасная функция для форматирован��я с разделителями
   const safeLocaleString = (value) => {
     // Если значение null, undefined или пустая строка
     if (value === null || value === undefined || value === '') return '-';
@@ -159,85 +167,71 @@ const AdsTable = () => {
     ? adsData 
     : adsData.filter(ad => ad.status.toLowerCase() === activeFilter);
 
-  // Исправленная мобильная версия AdsTable.jsx:
-
-if (screenSize === 'mobile') {
-  return (
-    <div className="w-full">
+  const renderMobileVersion = () => (
+    <div className="w-full space-y-4">
       {/* Фильтры */}
-      <div className="flex gap-2 overflow-x-auto pb-2 hide-scrollbar">
+      <div className="flex gap-2 overflow-x-auto pb-3 no-scrollbar -mx-3 px-3">
         {statusFilters.map(filter => (
           <button
             key={filter}
             onClick={() => setActiveFilter(filter)}
-            className={`px-4 py-2 rounded-full text-xs whitespace-nowrap transition-all duration-300
+            className={`px-4 py-2.5 rounded-full text-xs font-medium whitespace-nowrap transition-all
               ${activeFilter === filter 
-                ? 'bg-blue-600 text-white shadow-lg' 
-                : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}
+                ? 'bg-blue-600 text-white shadow-lg transform scale-105' 
+                : 'bg-gray-100/80 backdrop-blur-sm text-gray-600'}`}
           >
             {filter === 'all' ? 'Всі креативи' : filter}
           </button>
         ))}
       </div>
 
-      {/* Превью баннеров */}
-      <div className="grid grid-cols-2 gap-3 mb-4">
+      {/* Сетка карточек */}
+      <div className="mobile-grid">
         {filteredAds.map((ad) => (
           <div 
             key={ad.id} 
-            className="relative flex flex-col bg-white/80 backdrop-blur shadow-[0_4px_20px_-4px_rgba(0,0,0,0.1)] rounded-xl overflow-hidden"
+            className="mobile-card"
+            onClick={() => setSelectedAd(ad)}
           >
-            <div className="aspect-square rounded-t-xl overflow-hidden">
+            <div className="relative">
               <img
                 src={ad.preview}
                 alt={ad.name}
-                className="w-full h-full object-cover"
+                className="w-full h-32 object-cover rounded-t-xl"
               />
+              <div className={`
+                absolute top-2 right-2 px-2 py-1 rounded-full text-[10px] font-medium
+                backdrop-blur-md ${ad.status === "Активно" 
+                  ? "bg-green-100/80 text-green-800" 
+                  : "bg-red-100/80 text-red-800"}
+              `}>
+                {ad.status}
+              </div>
             </div>
             
-            <div className="p-2.5 space-y-1.5">
-              {/* Название */}
-              <p className="text-[13px] leading-tight font-medium text-gray-900 line-clamp-2">
+            <div className="p-3 space-y-2 flex-1 flex flex-col">
+              <p className="text-xs font-medium text-gray-900 line-clamp-2 flex-1">
                 {ad.name}
               </p>
               
-              {/* Платформа и статус */}
-              <div className="flex items-center justify-between gap-1">
-                <span className="text-[11px] text-gray-600">{ad.platform}</span>
-                <div className={`
-                  inline-flex items-center px-1.5 py-0.5 rounded-full text-[11px] font-medium gap-0.5
-                  ${ad.status === "Активно" 
-                    ? "bg-green-50 text-green-700" 
-                    : "bg-red-50 text-red-700"}
-                `}>
-                  {ad.status === "Активно" ? (
-                    <CheckCircle className="w-2.5 h-2.5" />
-                  ) : (
-                    <XCircle className="w-2.5 h-2.5" />
-                  )}
-                  {ad.status}
+              <div className="grid grid-cols-2 gap-2 text-[11px]">
+                <div className="metric-card">
+                  <span className="text-gray-500">Кліків</span>
+                  <div className="font-semibold mt-0.5">{formatters.toLocale(ad.clicks)}</div>
+                </div>
+                <div className="metric-card">
+                  <span className="text-gray-500">CTR</span>
+                  <div className="font-semibold mt-0.5">{formatters.toFixed(ad.ctr)}%</div>
                 </div>
               </div>
 
-              {/* Метрики */}
-              <div className="grid grid-cols-2 gap-1.5">
-                <div className="text-[11px]">
-                  <span className="text-gray-500">Кліків: </span>
-                  <span className="font-medium text-gray-900">{formatters.toLocale(ad.clicks)}</span>
-                </div>
-                <div className="text-[11px]">
-                  <span className="text-gray-500">CTR: </span>
-                  <span className="font-medium text-gray-900">{formatters.toFixed(ad.ctr)}%</span>
-                </div>
-              </div>
-
-              {/* Кнопка */}
+              {/* Добавляем кнопку "Подивитись" */}
               <button
                 onClick={() => setSelectedAd(ad)}
                 className="w-full bg-blue-50 hover:bg-blue-100 active:bg-blue-200 
                   text-blue-600 text-xs font-medium py-1.5 px-3 rounded-lg 
                   transition-colors flex items-center justify-center gap-1.5
-                  focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1"
+                  focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 mt-2"
               >
                 Подивитись
                 <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -250,72 +244,82 @@ if (screenSize === 'mobile') {
         ))}
       </div>
 
-      {/* Модальное окно */}
+      {/* Обновленное модальное окно */}
       {selectedAd && (
-        <div 
-          className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50 overflow-y-auto"
-          onClick={() => setSelectedAd(null)}
-        >
-          <div 
-            className="bg-white rounded-2xl w-full max-w-[90%] shadow-2xl"
-            onClick={e => e.stopPropagation()}
-          >
-            {/* Шапка */}
+        <div className="fixed inset-0 bg-black/30 backdrop-blur-sm z-50 flex">
+          <div className="modal-content w-full">
             <div className="p-4 border-b border-gray-100">
               <div className="flex justify-between items-start">
                 <div>
-                  <h3 className="text-lg font-medium">{selectedAd.name}</h3>
-                  <div className="flex items-center space-x-2 mt-1">
+                  <h3 className="text-base font-medium text-gray-900">{selectedAd.name}</h3>
+                  <div className="flex items-center gap-2 mt-1">
                     <div className={`
-                      inline-flex items-center px-2 py-1 rounded-full text-xs font-medium gap-1
+                      inline-flex items-center px-2 py-1 rounded-full text-xs font-medium
                       ${selectedAd.status === "Активно" 
-                        ? "bg-green-50 text-green-700" 
-                        : "bg-red-50 text-red-700"}
+                        ? "bg-green-100/80 text-green-800" 
+                        : "bg-red-100/80 text-red-800"}
                     `}>
                       {selectedAd.status === "Активно" ? (
-                        <CheckCircle className="w-3 h-3" />
+                        <CheckCircle className="w-3 h-3 mr-1" />
                       ) : (
-                        <XCircle className="w-3 х-3" />
+                        <XCircle className="w-3 h-3 mr-1" />
                       )}
                       {selectedAd.status}
                     </div>
-                    <span className="text-xs text-gray-500">
-                      {selectedAd.format} • {selectedAd.platform}
-                    </span>
+                    <span className="text-xs text-gray-500">{selectedAd.platform}</span>
                   </div>
                 </div>
                 <button 
                   onClick={() => setSelectedAd(null)}
                   className="p-2 hover:bg-gray-100 rounded-full"
                 >
-                  <svg className="w-5 h-5" viewBox="0 0 20 20" fill="currentColor">
-                    <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 111.414 1.414L11.414 10l4.293 4.293a1 1 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 01-1.414-1.414L8.586 10 4.293 5.707a1 1 010-1.414z" clipRule="evenodd" />
+                  <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                   </svg>
                 </button>
               </div>
             </div>
 
-            {/* Контент */}
             <div className="p-4 space-y-4">
-              {/* Превью */}
-              <div className="bg-gray-50 p-4 rounded-xl">
-                <img 
-                  src={selectedAd.preview}
-                  alt={selectedAd.name}
-                  className="w-full aspect-square object-cover rounded-lg"
-                />
-              </div>
+              <img 
+                src={selectedAd.preview}
+                alt={selectedAd.name}
+                className="w-full aspect-video object-cover rounded-lg"
+              />
 
-              {/* Метрики */}
               <div className="grid grid-cols-2 gap-3">
-                <MetricCard label="Кліків" value={formatters.toLocale(selectedAd.clicks)} />
-                <MetricCard label="CTR" value={`${formatters.toFixed(selectedAd.ctr)}%`} />
-                <MetricCard label="Охоплення" value={formatters.toLocale(selectedAd.reach)} />
-                <MetricCard label="Результат" value={selectedAd.result} />
-                <MetricCard label="Витрати" value={formatters.toCurrency(selectedAd.costs)} />
-                <MetricCard label="Ціна ліда" value={formatters.toCurrency(selectedAd.costPerLead)} />
-                <MetricCard label="Кількість квалу" value={selectedAd.qualAmount} />
-                <MetricCard label="Ціна квалу" value={formatters.toCurrency(selectedAd.costPerQualifiedLead)} />
+                <div className="metric-card">
+                  <span className="text-xs text-gray-500">Кліків</span>
+                  <div className="text-sm font-semibold mt-0.5">{formatters.toLocale(selectedAd.clicks)}</div>
+                </div>
+                <div className="metric-card">
+                  <span className="text-xs text-gray-500">CTR</span>
+                  <div className="text-sm font-semibold mt-0.5">{formatters.toFixed(selectedAd.ctr)}%</div>
+                </div>
+                <div className="metric-card">
+                  <span className="text-xs text-gray-500">Охоплення</span>
+                  <div className="text-sm font-semibold mt-0.5">{formatters.toLocale(selectedAd.reach)}</div>
+                </div>
+                <div className="metric-card">
+                  <span className="text-xs text-gray-500">Результат</span>
+                  <div className="text-sm font-semibold mt-0.5">{selectedAd.result}</div>
+                </div>
+                <div className="metric-card">
+                  <span className="text-xs text-gray-500">Витрати</span>
+                  <div className="text-sm font-semibold mt-0.5">{formatters.toCurrency(selectedAd.costs)}</div>
+                </div>
+                <div className="metric-card">
+                  <span className="text-xs text-gray-500">Ціна ліда</span>
+                  <div className="text-sm font-semibold mt-0.5">{formatters.toCurrency(selectedAd.costPerLead)}</div>
+                </div>
+                <div className="metric-card">
+                  <span className="text-xs text-gray-500">Кількість ��валу</span>
+                  <div className="text-sm font-semibold mt-0.5">{selectedAd.qualAmount}</div>
+                </div>
+                <div className="metric-card">
+                  <span className="text-xs text-gray-500">Ціна квалу</span>
+                  <div className="text-sm font-semibold mt-0.5">{formatters.toCurrency(selectedAd.costPerQualifiedLead)}</div>
+                </div>
               </div>
             </div>
           </div>
@@ -323,216 +327,165 @@ if (screenSize === 'mobile') {
       )}
     </div>
   );
-}
 
-  // Десктопная версия остается без изменений
-  return (
-    <div className="w-full">
+  const renderDesktopVersion = () => (
+    <div className="w-full space-y-6">
       {/* Фильтры */}
-      <div className="flex gap-2 overflow-x-auto pb-2 hide-scrollbar">
+      <div className="flex gap-3">
         {statusFilters.map(filter => (
           <button
             key={filter}
             onClick={() => setActiveFilter(filter)}
-            className={`px-4 py-2 rounded-full text-sm whitespace-nowrap transition-all duration-300
+            className={`px-5 py-2.5 rounded-full text-sm font-medium transition-all
               ${activeFilter === filter 
-                ? 'bg-blue-600 text-white shadow-lg' 
-                : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}
+                ? 'bg-blue-600 text-white shadow-lg transform scale-105' 
+                : 'bg-gray-100/80 backdrop-blur-sm text-gray-600 hover:bg-gray-200/80'}`}
           >
-            {filter === 'all' ? 'Всі креативи' : filter}
+            {filter === 'all' ? 'В��і креативи' : filter}
           </button>
         ))}
       </div>
 
-      {/* Обертка дл�� таблицы с исправленным скроллом */}
-      <div className="w-full overflow-hidden">
-        <div className="w-full overflow-x-auto touch-pan-x">
-          <div className="min-w-[1400px]"> {/* Минимальная ширина для скролла */}
-            <div className="bg-white/80 backdrop-blur shadow-[0_4px_20px_-4px_rgba(0,0,0,0.1)] rounded-lg">
-              <table className="w-full border-separate border-spacing-0 min-w-[1400px]">
-                <thead>
-                  <tr>
-                    <th className="sticky left-0 z-30 bg-blue-50/80 backdrop-blur-sm w-[300px] px-6 py-4 text-left">
-                      <span className="text-sm font-semibold">Креатив</span>
-                    </th>
-                    <th className="sticky left-[300px] z-30 bg-blue-50/80 backdrop-blur-sm w-[150px] px-6 py-4">
-                      <span className="text-sm font-semibold">Статус</span>
-                    </th>
-                    {[
-                      { key: 'clicks', label: 'Кліків' },
-                      { key: 'ctr', label: 'CTR (%)' },
-                      { key: 'reach', label: 'Охоплення' },
-                      { key: 'result', label: 'Результат' },
-                      { key: 'costs', label: 'Витрати' },
-                      { key: 'costPerLead', label: 'Ціна ліда' },
-                      { key: 'qualAmount', label: 'Кiлькість квалу' },
-                      { key: 'costPerQualifiedLead', label: 'Ціна квалу' }
-                    ].map(({ key, label }) => (
-                      <th 
-                        key={key}
-                        className="px-6 py-4 bg-blue-50/80 backdrop-blur-sm text-center"
-                      >
-                        <span className="text-sm font-semibold">{label}</span>
-                      </th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody>
-                  {filteredAds.map((ad) => (
-                    <tr
-                      key={ad.id}
-                      onClick={() => setSelectedAd(ad)}
-                      className="hover:bg-blue-50/30 transition-colors"
-                    >
-                      <td className="sticky left-0 z-20 bg-white/95 backdrop-blur-sm px-6 py-4">
-                        <div className="flex items-center">
-                          <img
-                            src={ad.preview}
-                            alt={ad.name}
-                            className="h-16 w-16 rounded-lg object-cover"
-                          />
-                          <div className="ml-4">
-                            <div className="text-sm font-medium text-gray-900">{ad.name}</div>
-                          </div>
-                        </div>
-                      </td>
-                      <td className="sticky left-[300px] z-20 bg-white/95 backdrop-blur-sm px-6 py-4">
-                        <div className={`
-                          inline-flex items-center px-3 py-1 rounded-full text-sm font-medium gap-1
-                          ${ad.status === "Активно" 
-                            ? "bg-green-100 text-green-800" // Обновленные цвета
-                            : "bg-red-100 text-red-800"}
-                        `}>
-                          {ad.status === "Активно" ? (
-                            <CheckCircle className="w-4 h-4 mr-1" /> // Увеличенный размер иконок
-                          ) : (
-                            <XCircle className="w-4 h-4 mr-1" />
-                          )}
-                          {ad.status}
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 text-center text-sm text-gray-500">
-                        {safeLocaleString(ad.clicks)}
-                      </td>
-                      <td className="px-6 py-4 text-center text-sm text-gray-500">
-                        {ad.ctr ? `${safeNumberFormat(ad.ctr)}%` : '-'}
-                      </td>
-                      <td className="px-6 py-4 text-center text-sm text-gray-500">
-                        {safeLocaleString(ad.reach)}
-                      </td>
-                      <td className="px-6 py-4 text-center text-sm text-gray-500">
-                        {ad.result || '-'}
-                      </td>
-                      <td className="px-6 py-4 text-center text-sm text-gray-500">
-                        {ad.costs ? `₴${safeNumberFormat(ad.costs)}` : '-'}
-                      </td>
-                      <td className="px-6 py-4 text-center text-sm text-gray-500">
-                        {ad.costPerLead ? `₴${safeNumberFormat(ad.costPerLead)}` : '-'}
-                      </td>
-                      <td className="px-6 py-4 text-center text-sm text-gray-500">
-                        {ad.qualAmount || '-'}
-                      </td>
-                      <td className="px-6 py-4 text-center text-sm text-gray-500">
-                        {ad.costPerQualifiedLead ? `₴${safeNumberFormat(ad.costPerQualifiedLead)}` : '-'}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
+      {/* Таблица */}
+      <div className="table-container">
+        <table className="w-full table-auto">
+          <thead>
+            <tr>
+              <th className="text-left">Креатив</th>
+              <th>Статус</th>
+              <th>Кліків</th>
+              <th>CTR</th>
+              <th>Охоплення</th>
+              <th>Результат</th>
+              <th>Витрати</th>
+              <th>Ціна ліда</th>
+              <th>Кількість квалу</th>
+              <th>Ціна квалу</th>
+            </tr>
+          </thead>
+          <tbody>
+            {filteredAds.map((ad) => (
+              <tr 
+                key={ad.id}
+                onClick={() => setSelectedAd(ad)}
+                className="hover:bg-blue-50/40 cursor-pointer"
+              >
+                <td className="p-4">
+                  <div className="flex items-center gap-3">
+                    <img 
+                      src={ad.preview}
+                      alt={ad.name}
+                      className="w-12 h-12 rounded-lg object-cover"
+                    />
+                    <span className="font-medium text-sm">{ad.name}</span>
+                  </div>
+                </td>
+                <td className="p-4">
+                  <div className={`
+                    inline-flex items-center px-2 py-1 rounded-full text-xs font-medium
+                    ${ad.status === "Активно" 
+                      ? "bg-green-100/80 text-green-800" 
+                      : "bg-red-100/80 text-red-800"}
+                  `}>
+                    {ad.status === "Активно" ? (
+                      <CheckCircle className="w-3 h-3 mr-1" />
+                    ) : (
+                      <XCircle className="w-3 h-3 mr-1" />
+                    )}
+                    {ad.status}
+                  </div>
+                </td>
+                <td className="p-4 text-center">{formatters.toLocale(ad.clicks)}</td>
+                <td className="p-4 text-center">{formatters.toFixed(ad.ctr)}%</td>
+                <td className="p-4 text-center">{formatters.toLocale(ad.reach)}</td>
+                <td className="p-4 text-center">{ad.result}</td>
+                <td className="p-4 text-center">{formatters.toCurrency(ad.costs)}</td>
+                <td className="p-4 text-center">{formatters.toCurrency(ad.costPerLead)}</td>
+                <td className="p-4 text-center">{ad.qualAmount}</td>
+                <td className="p-4 text-center">{formatters.toCurrency(ad.costPerQualifiedLead)}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
 
-      {/* Modal */}
+      {/* Модальное окно */}
       {selectedAd && (
-        <div 
-          className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50 overflow-y-auto"
-          onClick={() => setSelectedAd(null)}
-        >
-          <div 
-            className="bg-white rounded-2xl w-full max-w-4xl shadow-2xl my-8"
-            onClick={e => e.stopPropagation()}
-          >
-            {/* Шапка */}
-            <div className="sticky top-0 bg-white p-6 border-b border-gray-100 з-10">
+        <div className="fixed inset-0 bg-black/30 backdrop-blur-sm z-50 p-6 overflow-y-auto">
+          <div className="modal-content max-w-4xl mx-auto my-8">
+            <div className="p-6 border-b border-gray-100">
               <div className="flex justify-between items-start">
                 <div>
-                  <h3 className="text-xl font-medium">{selectedAd.name}</h3>
-                  <div className="flex items-center space-x-2 mt-1">
+                  <h3 className="text-xl font-medium text-gray-900">{selectedAd.name}</h3>
+                  <div className="flex items-center gap-3 mt-2">
                     <div className={`
-                      inline-flex items-center px-2 py-1 rounded-full text-xs font-medium gap-1
+                      inline-flex items-center px-3 py-1.5 rounded-full text-sm font-medium
                       ${selectedAd.status === "Активно" 
-                        ? "bg-green-50 text-green-700" 
-                        : "bg-red-50 text-red-700"}
+                        ? "bg-green-100/80 text-green-800" 
+                        : "bg-red-100/80 text-red-800"}
                     `}>
                       {selectedAd.status === "Активно" ? (
-                        <CheckCircle className="w-3 h-3" />
+                        <CheckCircle className="w-4 h-4 mr-1.5" />
                       ) : (
-                        <XCircle className="w-3 h-3" />
+                        <XCircle className="w-4 h-4 mr-1.5" />
                       )}
                       {selectedAd.status}
                     </div>
-                    <span className="text-sm text-gray-500">
-                      {selectedAd.format} • {selectedAd.platform}
-                    </span>
+                    <span className="text-sm text-gray-500">{selectedAd.platform}</span>
                   </div>
                 </div>
                 <button 
                   onClick={() => setSelectedAd(null)}
                   className="p-2 hover:bg-gray-100 rounded-full transition-colors"
                 >
-                  <svg className="w-5 h-5" viewBox="0 0 20 20" fill="currentColor">
-                    <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 111.414 1.414L11.414 10l4.293 4.293a1 1 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 01-1.414-1.414L8.586 10 4.293 5.707а1 1 010-1.414z" clipRule="evenodd" />
+                  <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                   </svg>
                 </button>
               </div>
             </div>
 
-            {/* Контент */}
             <div className="p-6 space-y-6">
-              {/* Превью */}
-              <div className="flex flex-col md:flex-row gap-6 justify-center bg-gray-50 п-4 md:p-6 rounded-xl">
-                <div className="preview-container">
-                  <div className="w-full md:w-48 aspect-square bg-white rounded-xl shadow-lg overflow-hidden">
-                    <img 
-                      src={selectedAd.preview}
-                      alt={selectedAd.name}
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                </div>
+              <div className="bg-gray-50 p-4 rounded-xl">
+                <img 
+                  src={selectedAd.preview}
+                  alt={selectedAd.name}
+                  className="w-full max-h-[400px] object-cover rounded-lg"
+                />
               </div>
 
-              {/* Метрики */}
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <div className="bg-gray-50 п-4 rounded-lg">
-                  <div className="text-sm text-gray-500">Кліків</div>
-                  <div className="text-lg font-semibold">{formatters.toLocale(selectedAd.clicks)}</div>
+              <div className="grid grid-cols-4 gap-4">
+                <div className="metric-card">
+                  <span className="text-sm text-gray-500">Кліків</span>
+                  <div className="text-lg font-semibold mt-1">{formatters.toLocale(selectedAd.clicks)}</div>
                 </div>
-                <div className="bg-gray-50 п-4 rounded-lg">
-                  <div className="text-sm text-gray-500">CTR</div>
-                  <div className="text-lg font-semibold">{formatters.toFixed(selectedAd.ctr)}%</div>
+                <div className="metric-card">
+                  <span className="text-sm text-gray-500">CTR</span>
+                  <div className="text-lg font-semibold mt-1">{formatters.toFixed(selectedAd.ctr)}%</div>
                 </div>
-                <div className="bg-gray-50 п-4 rounded-lg">
-                  <div className="text-sm text-gray-500">Охоплення</div>
-                  <div className="text-lg font-semibold">{formatters.toLocale(selectedAd.reach)}</div>
+                <div className="metric-card">
+                  <span className="text-sm text-gray-500">Охоплення</span>
+                  <div className="text-lg font-semibold mt-1">{formatters.toLocale(selectedAd.reach)}</div>
                 </div>
-                <div className="bg-gray-50 п-4 rounded-lg">
-                  <div className="text-sm text-gray-500">Результат</div>
-                  <div className="text-lg font-semibold">{selectedAd.result}</div>
+                <div className="metric-card">
+                  <span className="text-sm text-gray-500">Результат</span>
+                  <div className="text-lg font-semibold mt-1">{selectedAd.result}</div>
                 </div>
-                <div className="bg-gray-50 п-4 rounded-lg">
-                  <div className="text-sm text-gray-500">Ціна ліда</div>
-                  <div className="text-lg font-semibold">{formatters.toCurrency(selectedAd.costPerLead)}</div>
+                <div className="metric-card">
+                  <span className="text-sm text-gray-500">Витрати</span>
+                  <div className="text-lg font-semibold mt-1">{formatters.toCurrency(selectedAd.costs)}</div>
                 </div>
-                <div className="bg-gray-50 п-4 rounded-lg">
-                  <div className="text-sm text-gray-500">Кількість квалу</div>
-                  <div className="text-lg font-semibold">{selectedAd.qualAmount}</div>
+                <div className="metric-card">
+                  <span className="text-sm text-gray-500">Ціна ліда</span>
+                  <div className="text-lg font-semibold mt-1">{formatters.toCurrency(selectedAd.costPerLead)}</div>
                 </div>
-                <div className="bg-gray-50 п-4 rounded-lg">
-                  <div className="text-sm text-gray-500">Ціна квалу</div>
-                  <div className="text-lg font-semibold">{formatters.toCurrency(selectedAd.costPerQualifiedLead)}</div>
+                <div className="metric-card">
+                  <span className="text-sm text-gray-500">Кількість квалу</span>
+                  <div className="text-lg font-semibold mt-1">{selectedAd.qualAmount}</div>
+                </div>
+                <div className="metric-card">
+                  <span className="text-sm text-gray-500">Ціна квалу</span>
+                  <div className="text-lg font-semibold mt-1">{formatters.toCurrency(selectedAd.costPerQualifiedLead)}</div>
                 </div>
               </div>
             </div>
@@ -541,14 +494,8 @@ if (screenSize === 'mobile') {
       )}
     </div>
   );
-};
 
-// Компонент для метрик
-const MetricCard = ({ label, value }) => (
-  <div className="bg-gray-50 п-4 rounded-lg transition-all hover:bg-gray-100">
-    <div className="text-sm text-gray-500">{label}</div>
-    <div className="text-lg font-semibold">{value}</div>
-  </div>
-);
+  return screenSize === 'mobile' ? renderMobileVersion() : renderDesktopVersion();
+};
 
 export default AdsTable;
