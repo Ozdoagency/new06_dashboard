@@ -142,8 +142,67 @@ body {
   }
 }
 
-/* Обновленные стили в index.css */
-/* Удалить старые стили таблицы и добавить новые */
+/* Стили для мобильной версии */
+@media (max-width: 768px) {
+  .container {
+    width: 100%;
+    max-width: 100%;
+    padding: 1;
+  }
+  
+  /* Карточки кампаний */
+  .campaign-card {
+    width: 100%;
+    margin-bottom: 1rem;
+  }
+  
+  /* Общие стили для карточек */
+  .bg-white\/80 {
+    width: 100%;
+    margin: 0;
+  }
+  
+  /* Отступы внутри контейнера */
+  .space-y-4 > :not([hidden]) ~ :not([hidden]) {
+    margin-top: 1rem;
+  }
+
+  .preview-container {
+    @apply w-full;
+  }
+
+  .overflow-x-auto {
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE и Edge */
+  }
+
+  .touch-pan-x {
+    touch-action: pan-x;
+  }
+
+  /* Скрыть скролл-бар для WebKit */
+  .hide-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+@media (min-width: 768px) {
+  .table-container {
+    max-height: calc(100vh - 20rem);
+    overflow-y: auto;
+  }
+
+  .table-container::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  .table-container::-webkit-scrollbar-thumb {
+    background-color: rgba(0, 0, 0, 0.2);
+    border-radius: 3px;
+  }
+}
 
 .table-auto {
   border-spacing: 0;
@@ -203,4 +262,13 @@ body {
     -ms-overflow-style: none;  /* IE и Edge */
     scrollbar-width: none;  /* Firefox */
   }
+}
+
+/* Стили для превью */
+.preview-container {
+  @apply transition-transform duration-300;
+}
+
+.preview-container:hover {
+  @apply -translate-y-1;
 }

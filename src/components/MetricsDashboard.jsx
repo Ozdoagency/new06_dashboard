@@ -11,6 +11,7 @@ import {
   UserCheck, Calculator, BarChart,
   Wallet, UserCog, ChevronLeft, ChevronRight, Globe, ChevronDown
 } from 'lucide-react';
+import AdsTable from './ui/AdsTable';
 
 // Функция форматирования даты (перемещена в начало файла)
 const formatDate = (date) => {
@@ -395,6 +396,9 @@ const MetricsDashboard = ({ initialData = [] }) => {
     {
       name: "Ozdo | Leadform | Video | Europe 0710",
       status: "Активно",
+      clicks: "1,547",        // Добавляем эти поля
+      ctr: "3.07",           // Добавляем эти поля
+      actual: "11,846.50",   // Добавляем эти поля
       result: "50 Ліди",
       reach: "18 103",
       leadCost: "311,75 грн",
@@ -641,6 +645,12 @@ const MetricsDashboard = ({ initialData = [] }) => {
       <div className="mt-8">
         <h2 className="text-xl font-semibold mb-4">{translations[lang].table.title}</h2>
         <CampaignsTable campaigns={campaignsData} currentLang={lang} />
+      </div>
+
+      {/* Добавляем таблицу рекламных креативов */}
+      <div className="mt-8">
+        <h2 className="text-xl font-semibold mb-4">Рекламні креативи</h2>
+        <AdsTable />
       </div>
 
       {/* Футер */}

@@ -28,7 +28,13 @@ const resources = {
         qualCost: 'Qual Cost',
         active: 'Active',
         inactive: 'Inactive',
-        leads: 'Leads'
+        leads: 'Leads',
+        views: 'Views',
+        clicks: 'Clicks', // Клики / Кліки
+        ctr: 'CTR',
+        impressions: 'Impressions', // показы / Покази
+        qualPercent: 'Qual %', // % квалов / % квалів
+        actual: 'Budget' // EN
       }
     }
   },
@@ -57,7 +63,12 @@ const resources = {
         qualCost: 'Ціна квалу',
         active: 'Активно',
         inactive: 'Неактивно',
-        leads: 'Ліди'
+        leads: 'Ліди',
+        views: 'Покази',
+        clicks: 'Кліків',
+        ctr: 'CTR',
+        qualPercent: '% квалу',
+        actual: 'Витрати' // UA
       }
     }
   },
@@ -86,7 +97,12 @@ const resources = {
         qualCost: 'Цена квала',
         active: 'Активно',
         inactive: 'Неактивно',
-        leads: 'Лиды'
+        leads: 'Лиды',
+        views: 'Показы',
+        clicks: 'Клики',
+        ctr: 'CTR',
+        qualPercent: '% квалов',
+        actual: 'Затраты' // RU
       }
     }
   }
