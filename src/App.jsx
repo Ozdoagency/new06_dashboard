@@ -2,7 +2,7 @@ import React from 'react';
 import MetricsDashboard from './components/MetricsDashboard';
 import ErrorBoundary from './components/ErrorBoundary';
 import { TooltipProvider } from "@/components/ui/tooltip";
-import '/workspaces/new06_dashboard/i18n.js';
+import '../i18n.js'; // Исправленный путь импорта
 
 function App() {
   return (
