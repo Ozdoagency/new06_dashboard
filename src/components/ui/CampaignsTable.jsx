@@ -159,8 +159,8 @@ const CampaignsTable = ({ campaigns = campaignsData, currentLang }) => {
 
   const renderMobileVersion = () => (
     <div className="w-full space-y-4">
-      {sortedCampaigns.map((campaign, index) => (
-        <div key={index} className="bg-white/80 backdrop-blur shadow-[0_4px_20px_-4px_rgba(0,0,0,0.1)] rounded-lg p-4 hover:scale-[1.02] transition-transform">
+      {sortedCampaigns.map((campaign) => (
+        <div key={campaign.id} className="bg-white/80 backdrop-blur shadow-[0_4px_20px_-4px_rgba(0,0,0,0.1)] rounded-lg p-4 hover:scale-[1.02] transition-transform">
           <div className="space-y-4">
             <div className="flex justify-between items-start gap-2">
               <h3 className="font-medium text-sm text-gray-900">{campaign.name}</h3>
@@ -190,7 +190,7 @@ const CampaignsTable = ({ campaigns = campaignsData, currentLang }) => {
                 qualAmount: { icon: UserCheck, label: t('table.qualAmount') },
                 qualCost: { icon: UserX, label: t('table.qualCost') }
               }).map(([key, { icon: Icon, label }]) => (
-                <div key={key} className="bg-blue-50/50 rounded-lg p-3">
+                <div key={`${campaign.id}-${key}`} className="bg-blue-50/50 rounded-lg p-3">
                   <div className="flex items-center gap-2 text-blue-600 mb-1">
                     <Icon className="w-4 h-4" />
                     <span className="text-xs font-medium">{label}</span>
@@ -214,16 +214,22 @@ const CampaignsTable = ({ campaigns = campaignsData, currentLang }) => {
           <table className="w-full table-auto">
             <thead>
               <tr className="border-b border-gray-100">
-                <th className="text-left p-4 text-sm font-medium text-gray-500">Кампанія</th>
-                <th className="p-4 text-sm font-medium text-gray-500">Статус</th>
-                <th className="p-4 text-sm font-medium text-gray-500">Кліків</th>
-                <th className="p-4 text-sm font-medium text-gray-500">CTR</th>
-                <th className="p-4 text-sm font-medium text-gray-500">Охоплення</th>
-                <th className="p-4 text-sm font-medium text-gray-500">Результат</th>
-                <th className="p-4 text-sm font-medium text-gray-500">Витрати</th>
-                <th className="p-4 text-sm font-medium text-gray-500">Ціна ліда</th>
-                <th className="p-4 text-sm font-medium text-gray-500">Кількість квалу</th>
-                <th className="p-4 text-sm font-medium text-gray-500">Ціна квалу</th>
+                {[
+                  { key: 'name', label: 'Кампанія' },
+                  { key: 'status', label: 'Статус' },
+                  { key: 'clicks', label: 'Кліків' },
+                  { key: 'ctr', label: 'CTR' },
+                  { key: 'reach', label: 'Охоплення' },
+                  { key: 'result', label: 'Результат' },
+                  { key: 'actual', label: 'Витрати' },
+                  { key: 'leadCost', label: 'Ціна ліда' },
+                  { key: 'qualAmount', label: 'Кількість квалу' },
+                  { key: 'qualCost', label: 'Ціна квалу' }
+                ].map(({ key, label }) => (
+                  <th key={key} className="p-4 text-sm font-medium text-gray-500">
+                    {label}
+                  </th>
+                ))}
               </tr>
             </thead>
             <tbody>

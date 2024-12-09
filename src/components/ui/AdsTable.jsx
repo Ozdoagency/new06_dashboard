@@ -56,7 +56,12 @@ const AdsTable = () => {
       costPerQualifiedLead: 623.50,
       status: 'Активно',
       format: 'Story',
-      platform: 'Facebook'
+      platform: 'Facebook',
+      campaigns: [
+        { name: 'Ozdo | Leadform | Video | Europe 0710', status: 'Активно', days: 45 },
+        { name: 'Ozdo | Leadform | Video | EU 2810', status: 'Неактивно', days: 28 },
+        { name: 'Ozdo | Leadform | Video | EU 05.12', status: 'Активно', days: 15 }
+      ]
     },
     {
       id: 2,
@@ -73,7 +78,11 @@ const AdsTable = () => {
       costPerQualifiedLead: 647.20,
       status: 'Неактивно',
       format: 'Reel',
-      platform: 'Instagram'
+      platform: 'Instagram',
+      campaigns: [
+        { name: 'Ozdo | Leadform | Video | EU 1911', status: 'Активно', days: 32 },
+        { name: 'Ozdo | Leadform | Video | EU 2411', status: 'Неактивно', days: 18 }
+      ]
     },
     {
       id: 3,
@@ -90,7 +99,10 @@ const AdsTable = () => {
       costPerQualifiedLead: 772.30,
       status: 'Активно',
       format: 'Feed',
-      platform: 'Facebook'
+      platform: 'Facebook',
+      campaigns: [
+        { name: 'Ozdo | Leadform | Image | EU 0512', status: 'Активно', days: 25 }
+      ]
     }
   ];
 
@@ -184,19 +196,20 @@ const AdsTable = () => {
     const isMobile = screenSize === 'mobile';
     
     const metrics = [
-      { label: 'Кліків', value: formatters.toLocale(selectedAd.clicks), icon: BarChart2 },
-      { label: 'CTR', value: `${formatters.toFixed(selectedAd.ctr)}%`, icon: TrendingUp },
-      { label: 'Охоплення', value: formatters.toLocale(selectedAd.reach), icon: Users },
-      { label: 'Результат', value: selectedAd.result, icon: Activity },
-      { label: 'Витрати', value: formatters.toCurrency(selectedAd.costs), icon: DollarSign },
-      { label: 'Ціна ліда', value: formatters.toCurrency(selectedAd.costPerLead), icon: PieChart },
-      { label: 'Кількість квалу', value: selectedAd.qualAmount, icon: UserCheck },
-      { label: 'Ціна квалу', value: formatters.toCurrency(selectedAd.costPerQualifiedLead), icon: UserX }
+      { id: 'clicks', label: 'Кліків', value: formatters.toLocale(selectedAd.clicks), icon: BarChart2 },
+      { id: 'ctr', label: 'CTR', value: `${formatters.toFixed(selectedAd.ctr)}%`, icon: TrendingUp },
+      { id: 'reach', label: 'Охоплення', value: formatters.toLocale(selectedAd.reach), icon: Users },
+      { id: 'result', label: 'Результат', value: selectedAd.result, icon: Activity },
+      { id: 'costs', label: 'Витрати', value: formatters.toCurrency(selectedAd.costs), icon: DollarSign },
+      { id: 'costPerLead', label: 'Ціна ліда', value: formatters.toCurrency(selectedAd.costPerLead), icon: PieChart },
+      { id: 'qualAmount', label: 'Кількість квалу', value: selectedAd.qualAmount, icon: UserCheck },
+      { id: 'costPerQualifiedLead', label: 'Ціна квалу', value: formatters.toCurrency(selectedAd.costPerQualifiedLead), icon: UserX }
     ];
   
     return (
       <div className="fixed inset-0 bg-black/30 backdrop-blur-sm z-50 p-4 overflow-y-auto">
         <div className={`bg-white/100 backdrop-blur shadow-[0_4px_20px_-4px_rgba(0,0,0,0.1)] rounded-xl mx-auto my-4 ${isMobile ? 'max-w-sm' : 'max-w-4xl'}`}>
+          {/* Modal Header */}
           <div className={`${isMobile ? 'p-4' : 'p-6'} border-b border-gray-100`}>
             <div className="flex justify-between items-start">
               <div>
@@ -226,8 +239,10 @@ const AdsTable = () => {
               </button>
             </div>
           </div>
-  
-          <div className={`${isMobile ? 'p-4' : 'p-6'} space-y-4`}>
+
+          {/* Modal Content */}
+          <div className={`${isMobile ? 'p-4' : 'p-6'} space-y-6`}>
+            {/* Preview Image */}
             <div className="bg-blue-50/50 p-2 rounded-xl">
               <img 
                 src={selectedAd.preview}
@@ -235,10 +250,11 @@ const AdsTable = () => {
                 className="w-full rounded-lg object-cover aspect-video"
               />
             </div>
-  
+
+            {/* Metrics Grid */}
             <div className={`grid ${isMobile ? 'grid-cols-2' : 'grid-cols-4'} gap-3`}>
-              {metrics.map(({ label, value, icon: Icon }) => (
-                <div key={label} className="bg-blue-50/50 rounded-lg p-3">
+              {metrics.map(({ id, label, value, icon: Icon }) => (
+                <div key={`${selectedAd.id}-${id}`} className="bg-blue-50/50 rounded-lg p-3">
                   <div className="flex items-center gap-2 text-blue-600 mb-1">
                     <Icon className="w-4 h-4" />
                     <span className="text-xs font-medium">{label}</span>
@@ -248,6 +264,47 @@ const AdsTable = () => {
                   </div>
                 </div>
               ))}
+            </div>
+
+            {/* Campaigns Section */}
+            <div className="bg-gray-50 rounded-xl overflow-hidden">
+              <div className="px-4 py-3 bg-gray-100/80 border-b border-gray-200">
+                <h4 className={`font-medium text-gray-900 ${isMobile ? 'text-sm' : 'text-base'}`}>
+                  Використання в рекламних кампаніях
+                </h4>
+              </div>
+              <div className="divide-y divide-gray-200">
+                {selectedAd.campaigns?.map((campaign, index) => (
+                  <div 
+                    key={index} 
+                    className={`${isMobile ? 'px-4 py-3' : 'px-6 py-4'} hover:bg-gray-50/50`}
+                  >
+                    <div className={`flex ${isMobile ? 'flex-col gap-2' : 'items-center justify-between'}`}>
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <div className={`font-medium ${isMobile ? 'text-xs' : 'text-sm'} text-gray-900`}>
+                          {campaign.name}
+                        </div>
+                        <div className={`
+                          inline-flex items-center px-2 py-1 rounded-full text-xs font-medium
+                          ${campaign.status === "Активно" 
+                            ? "bg-green-100/80 text-green-800" 
+                            : "bg-red-100/80 text-red-800"}
+                        `}>
+                          {campaign.status === "Активно" ? (
+                            <CheckCircle className="w-3 h-3 mr-1" />
+                          ) : (
+                            <XCircle className="w-3 h-3 mr-1" />
+                          )}
+                          {campaign.status}
+                        </div>
+                      </div>
+                      <div className={`text-xs text-gray-500 ${isMobile ? 'ml-1' : ''}`}>
+                        {campaign.days} днів активності
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         </div>
@@ -367,16 +424,20 @@ const AdsTable = () => {
           <table className="w-full table-auto">
             <thead>
               <tr>
-                <th className="text-left">Креатив</th>
-                <th>Статус</th>
-                <th>Кліків</th>
-                <th>CTR</th>
-                <th>Охоплення</th>
-                <th>Результат</th>
-                <th>Витрати</th>
-                <th>Ціна ліда</th>
-                <th>Кількість квалу</th>
-                <th>Ціна квалу</th>
+                {[
+                  { id: 'creative', label: 'Креатив' },
+                  { id: 'status', label: 'Статус' },
+                  { id: 'clicks', label: 'Кліків' },
+                  { id: 'ctr', label: 'CTR' },
+                  { id: 'reach', label: 'Охоплення' },
+                  { id: 'result', label: 'Результат' },
+                  { id: 'costs', label: 'Витрати' },
+                  { id: 'costPerLead', label: 'Ціна ліда' },
+                  { id: 'qualAmount', label: 'Кількість квалу' },
+                  { id: 'costPerQualifiedLead', label: 'Ціна квалу' }
+                ].map(({ id, label }) => (
+                  <th key={id} className="text-left">{label}</th>
+                ))}
               </tr>
             </thead>
             <tbody>
