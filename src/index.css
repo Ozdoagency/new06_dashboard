@@ -533,3 +533,55 @@ body {
   border-bottom: 1px solid rgba(0, 0, 0, 0.03);
   background: rgba(255, 255, 255, 0.9);
 }
+
+.campaign-card-status {
+  @apply inline-flex items-center px-2 py-1 rounded-full text-xs font-medium gap-1;
+}
+
+/* Убираем старые стили статуса */
+.campaign-card-status-active,
+.campaign-card-status-inactive {
+  display: none;
+}
+
+.oswald-200 {
+  font-family: "Oswald", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 200;
+  font-style: normal;
+}
+
+.oswald-300 {
+  font-family: "Oswald", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 300;
+  font-style: normal;
+}
+
+.oswald-400 {
+  font-family: "Oswald", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.oswald-500 {
+  font-family: "Oswald", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 500;
+  font-style: normal;
+}
+
+.oswald-600 {
+  font-family: "Oswald", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 600;
+  font-style: normal;
+}
+
+.oswald-700 {
+  font-family: "Oswald", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 700;
+  font-style: normal;
+}

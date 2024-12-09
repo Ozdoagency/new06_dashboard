@@ -160,105 +160,46 @@ const CampaignsTable = ({ campaigns = campaignsData, currentLang }) => {
   const renderMobileVersion = () => (
     <div className="w-full space-y-4">
       {sortedCampaigns.map((campaign, index) => (
-        <div key={index} className="campaign-card">
-          <div className="campaign-card-header">
-            <h3 className="campaign-card-title">
-              {campaign.name}
-            </h3>
-            <div className={`
-              campaign-card-status
-              ${campaign.status === "Активно"
-                ? "campaign-card-status-active" 
-                : "campaign-card-status-inactive"}
-            `}>
-              {campaign.status === "Активно" ? (
-                <CheckCircle className="w-3 h-3" />
-              ) : (
-                <XCircle className="w-3 х-3" />
-              )}
-              {campaign.status === "Активно" ? t('table.active') : t('table.inactive')}
-            </div>
-          </div>
-
-          <div className="campaign-card-metrics">
-            <div className="campaign-card-metric">
-              <p className="campaign-card-metric-label">
-                <BarChart2 className="w-3 h-3" />
-                {t('table.clicks')}
-              </p>
-              <p className="campaign-card-metric-value">
-                {formatters.number(campaign.clicks)}
-              </p>
-            </div>
-            
-            <div className="campaign-card-metric">
-              <p className="campaign-card-metric-label">
-                <TrendingUp className="w-3 h-3" />
-                {t('table.ctr')}
-              </p>
-              <p className="campaign-card-metric-value">
-                {campaign.ctr ? formatters.percent(campaign.ctr) : '-'}
-              </p>
-            </div>
-            
-            <div className="campaign-card-metric">
-              <p className="campaign-card-metric-label">
-                <Users className="w-3 h-3" />
-                {t('table.reach')}
-              </p>
-              <p className="campaign-card-metric-value">{campaign.reach}</p>
-            </div>
-            
-            <div className="campaign-card-metric">
-              <p className="campaign-card-metric-label">
-                <Activity className="w-3 h-3" />
-                {t('table.result')}
-              </p>
-              <p className="campaign-card-metric-value">{campaign.result}</p>
-            </div>
-            
-            <div className="campaign-card-metric">
-              <p className="campaign-card-metric-label">
-                <DollarSign className="w-3 h-3" />
-                {t('table.actual')}
-              </p>
-              <p className="campaign-card-metric-value">
-                {campaign.actual ? formatters.currency(campaign.actual) : '-'}
-              </p>
-            </div>
-            
-            <div className="campaign-card-metric">
-              <p className="campaign-card-metric-label">
-                <PieChart className="w-3 h-3" />
-                {t('table.leadCost')}
-              </p>
-              <p className="campaign-card-metric-value">{campaign.leadCost}</p>
-            </div>
-            
-            <div className="campaign-card-metric">
-              <p className="campaign-card-metric-label">
-                <UserCheck className="w-3 h-3" />
-                {t('table.qualAmount')}
-              </p>
-              <p className="campaign-card-metric-value">{campaign.qualAmount}</p>
-            </div>
-            
-            <div className="campaign-card-metric">
-              <p className="campaign-card-metric-label">
-                <UserX className="w-3 h-3" />
-                {t('table.qualCost')}
-              </p>
-              <div className="flex items-center gap-2">
-                <p className="campaign-card-metric-value">{campaign.qualCost}</p>
-                <Tooltip>
-                  <TooltipTrigger>
-                    <Info className="w-3 h-3 text-blue-500" />
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p>Середня ціна за один кваліфікований лід</p>
-                  </TooltipContent>
-                </Tooltip>
+        <div key={index} className="bg-white/80 backdrop-blur shadow-[0_4px_20px_-4px_rgba(0,0,0,0.1)] rounded-lg p-4 hover:scale-[1.02] transition-transform">
+          <div className="space-y-4">
+            <div className="flex justify-between items-start gap-2">
+              <h3 className="font-medium text-sm text-gray-900">{campaign.name}</h3>
+              <div className={`
+                inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium
+                ${campaign.status === "Активно" 
+                  ? "bg-green-100/80 text-green-800" 
+                  : "bg-red-100/80 text-red-800"}
+              `}>
+                {campaign.status === "Активно" ? (
+                  <CheckCircle className="w-3 h-3 mr-1" />
+                ) : (
+                  <XCircle className="w-3 h-3 mr-1" />
+                )}
+                {campaign.status}
               </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              {Object.entries({
+                clicks: { icon: BarChart2, label: t('table.clicks') },
+                ctr: { icon: TrendingUp, label: t('table.ctr') },
+                reach: { icon: Users, label: t('table.reach') },
+                result: { icon: Activity, label: t('table.result') },
+                actual: { icon: DollarSign, label: t('table.actual') },
+                leadCost: { icon: PieChart, label: t('table.leadCost') },
+                qualAmount: { icon: UserCheck, label: t('table.qualAmount') },
+                qualCost: { icon: UserX, label: t('table.qualCost') }
+              }).map(([key, { icon: Icon, label }]) => (
+                <div key={key} className="bg-blue-50/50 rounded-lg p-3">
+                  <div className="flex items-center gap-2 text-blue-600 mb-1">
+                    <Icon className="w-4 h-4" />
+                    <span className="text-xs font-medium">{label}</span>
+                  </div>
+                  <p className="text-sm font-semibold text-gray-900">
+                    {formatters[key] ? formatters[key](campaign[key]) : campaign[key]}
+                  </p>
+                </div>
+              ))}
             </div>
           </div>
         </div>
@@ -267,61 +208,63 @@ const CampaignsTable = ({ campaigns = campaignsData, currentLang }) => {
   );
 
   const renderDesktopVersion = () => (
-    <div className="w-full space-y-6">
-      <div className="table-container">
-        <table className="w-full table-auto">
-          <thead>
-            <tr>
-              <th className="text-left">Кампанія</th>
-              <th>Статус</th>
-              <th>Кліків</th>
-              <th>CTR</th>
-              <th>Охоплення</th>
-              <th>Результат</th>
-              <th>Витрати</th>
-              <th>Ціна ліда</th>
-              <th>Кількість квалу</th>
-              <th>Ціна квалу</th>
-            </tr>
-          </thead>
-          <tbody>
-            {sortedCampaigns.map((campaign) => (
-              <tr 
-                key={campaign.id}
-                className="hover:bg-blue-50/40 cursor-pointer"
-              >
-                <td className="p-4">
-                  <div className="flex items-center gap-3">
-                    <span className="font-medium text-sm">{campaign.name}</span>
-                  </div>
-                </td>
-                <td className="p-4">
-                  <div className={`
-                    inline-flex items-center px-2 py-1 rounded-full text-xs font-medium
-                    ${campaign.status === "Активно" 
-                      ? "bg-green-100/80 text-green-800" 
-                      : "bg-red-100/80 text-red-800"}
-                  `}>
-                    {campaign.status === "Активно" ? (
-                      <CheckCircle className="w-3 h-3 mr-1" />
-                    ) : (
-                      <XCircle className="w-3 х-3 mr-1" />
-                    )}
-                    {campaign.status}
-                  </div>
-                </td>
-                <td className="p-4 text-center">{formatters.number(campaign.clicks)}</td>
-                <td className="p-4 text-center">{formatters.percent(campaign.ctr)}</td>
-                <td className="p-4 text-center">{formatters.number(campaign.reach)}</td>
-                <td className="p-4 text-center">{campaign.result}</td>
-                <td className="p-4 text-center">{formatters.currency(campaign.actual)}</td>
-                <td className="p-4 text-center">{formatters.currency(campaign.leadCost)}</td>
-                <td className="p-4 text-center">{campaign.qualAmount}</td>
-                <td className="p-4 text-center">{formatters.currency(campaign.qualCost)}</td>
+    <div className="w-full">
+      <div className="overflow-x-auto">
+        <div className="bg-white/80 backdrop-blur shadow-[0_4px_20px_-4px_rgba(0,0,0,0.1)] rounded-lg">
+          <table className="w-full table-auto">
+            <thead>
+              <tr className="border-b border-gray-100">
+                <th className="text-left p-4 text-sm font-medium text-gray-500">Кампанія</th>
+                <th className="p-4 text-sm font-medium text-gray-500">Статус</th>
+                <th className="p-4 text-sm font-medium text-gray-500">Кліків</th>
+                <th className="p-4 text-sm font-medium text-gray-500">CTR</th>
+                <th className="p-4 text-sm font-medium text-gray-500">Охоплення</th>
+                <th className="p-4 text-sm font-medium text-gray-500">Результат</th>
+                <th className="p-4 text-sm font-medium text-gray-500">Витрати</th>
+                <th className="p-4 text-sm font-medium text-gray-500">Ціна ліда</th>
+                <th className="p-4 text-sm font-medium text-gray-500">Кількість квалу</th>
+                <th className="p-4 text-sm font-medium text-gray-500">Ціна квалу</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {sortedCampaigns.map((campaign) => (
+                <tr 
+                  key={campaign.id}
+                  className="border-b border-gray-50 hover:bg-blue-50/40 transition-colors"
+                >
+                  <td className="p-4">
+                    <div className="flex items-center gap-3">
+                      <span className="font-medium text-sm text-gray-900">{campaign.name}</span>
+                    </div>
+                  </td>
+                  <td className="p-4">
+                    <div className={`
+                      inline-flex items-center justify-center px-2.5 py-1 rounded-full text-xs font-medium w-[110px]
+                      ${campaign.status === "Активно" 
+                        ? "bg-green-100/80 text-green-800" 
+                        : "bg-red-100/80 text-red-800"}
+                    `}>
+                      {campaign.status === "Активно" ? (
+                        <CheckCircle className="w-3 h-3 mr-1" />
+                      ) : (
+                        <XCircle className="w-3 h-3 mr-1" />
+                      )}
+                      {campaign.status}
+                    </div>
+                  </td>
+                  <td className="p-4 text-center text-sm text-gray-900">{formatters.number(campaign.clicks)}</td>
+                  <td className="p-4 text-center text-sm text-gray-900">{formatters.percent(campaign.ctr)}</td>
+                  <td className="p-4 text-center text-sm text-gray-900">{formatters.number(campaign.reach)}</td>
+                  <td className="p-4 text-center text-sm text-gray-900">{campaign.result}</td>
+                  <td className="p-4 text-center text-sm text-gray-900">{formatters.currency(campaign.actual)}</td>
+                  <td className="p-4 text-center text-sm text-gray-900">{formatters.currency(campaign.leadCost)}</td>
+                  <td className="p-4 text-center text-sm text-gray-900">{campaign.qualAmount}</td>
+                  <td className="p-4 text-center text-sm text-gray-900">{formatters.currency(campaign.qualCost)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   );
