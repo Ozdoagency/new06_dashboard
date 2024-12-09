@@ -66,7 +66,7 @@ const AdsTable = () => {
     {
       id: 2,
       name: 'Ozdo | Reel | Video | EU 2810',
-      type: 'відео',
+      type: 'Відео',
       preview: 'https://placehold.co/400x400/webp?text=Reel',
       reach: 45123,
       clicks: 1289,
@@ -411,7 +411,7 @@ const AdsTable = () => {
             className={`px-5 py-2.5 rounded-lg text-sm font-medium transition-all
               ${activeFilter === filter 
                 ? 'bg-blue-600 text-white shadow-lg transform scale-105' 
-                : 'bg-gray-100/80 backdrop-blur-sm text-gray-600 hover:bg-gray-200/80'}`}
+                : 'bg-blue-50/50 text-blue-600 hover:bg-blue-100'}`}
           >
             {filter === 'all' ? 'Вcі креативи' : filter}
           </button>
@@ -419,24 +419,29 @@ const AdsTable = () => {
       </div>
 
       {/* Таблица */}
-      <div className="overflow-x-auto">
-        <div className="table-container min-w-[1500px]">
+      <div className="overflow-x-auto rounded-xl">
+        <div className="min-w-max bg-white/80 backdrop-blur shadow-[0_4px_20px_-4px_rgba(0,0,0,0.1)]">
           <table className="w-full table-auto">
             <thead>
-              <tr>
+              <tr className="border-b border-gray-100">
                 {[
-                  { id: 'creative', label: 'Креатив' },
-                  { id: 'status', label: 'Статус' },
-                  { id: 'clicks', label: 'Кліків' },
-                  { id: 'ctr', label: 'CTR' },
-                  { id: 'reach', label: 'Охоплення' },
-                  { id: 'result', label: 'Результат' },
-                  { id: 'costs', label: 'Витрати' },
-                  { id: 'costPerLead', label: 'Ціна ліда' },
-                  { id: 'qualAmount', label: 'Кількість квалу' },
-                  { id: 'costPerQualifiedLead', label: 'Ціна квалу' }
-                ].map(({ id, label }) => (
-                  <th key={id} className="text-left">{label}</th>
+                  { id: 'creative', label: 'Креатив', icon: null },
+                  { id: 'status', label: 'Статус', icon: null },
+                  { id: 'clicks', label: 'Кліків', icon: BarChart2 },
+                  { id: 'ctr', label: 'CTR', icon: TrendingUp },
+                  { id: 'reach', label: 'Охоплення', icon: Users },
+                  { id: 'result', label: 'Результат', icon: Activity },
+                  { id: 'costs', label: 'Витрати', icon: DollarSign },
+                  { id: 'costPerLead', label: 'Ціна ліда', icon: PieChart },
+                  { id: 'qualAmount', label: 'Кількість квалу', icon: UserCheck },
+                  { id: 'costPerQualifiedLead', label: 'Ціна квалу', icon: UserX }
+                ].map(({ id, label, icon: Icon }) => (
+                  <th key={id} className="p-4 text-sm font-medium text-gray-500 hover:text-blue-600 cursor-pointer transition-colors">
+                    <div className="flex items-center justify-center gap-2">
+                      {Icon && <Icon className="w-4 h-4" />}
+                      {label}
+                    </div>
+                  </th>
                 ))}
               </tr>
             </thead>
@@ -445,7 +450,7 @@ const AdsTable = () => {
                 <tr 
                   key={ad.id}
                   onClick={() => setSelectedAd(ad)}
-                  className="hover:bg-blue-50/40 cursor-pointer"
+                  className="border-b border-gray-50 hover:bg-blue-50/40 transition-colors group cursor-pointer"
                 >
                   <td className="p-4">
                     <div className="flex items-center gap-3">
@@ -454,12 +459,14 @@ const AdsTable = () => {
                         alt={ad.name}
                         className="w-12 h-12 rounded-lg object-cover"
                       />
-                      <span className="font-medium text-sm">{ad.name}</span>
+                      <span className="font-medium text-sm text-gray-900 group-hover:text-blue-600 transition-colors">
+                        {ad.name}
+                      </span>
                     </div>
                   </td>
                   <td className="p-4">
                     <div className={`
-                      inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium
+                      inline-flex items-center justify-center px-2.5 py-1 rounded-full text-xs font-medium w-[110px]
                       ${ad.status === "Активно" 
                         ? "bg-green-100/80 text-green-800" 
                         : "bg-red-100/80 text-red-800"}
@@ -472,14 +479,30 @@ const AdsTable = () => {
                       {ad.status}
                     </div>
                   </td>
-                  <td className="p-4 text-center">{formatters.toLocale(ad.clicks)}</td>
-                  <td className="p-4 text-center">{formatters.toFixed(ad.ctr)}%</td>
-                  <td className="p-4 text-center">{formatters.toLocale(ad.reach)}</td>
-                  <td className="p-4 text-center">{ad.result}</td>
-                  <td className="p-4 text-center">{formatters.toCurrency(ad.costs)}</td>
-                  <td className="p-4 text-center">{formatters.toCurrency(ad.costPerLead)}</td>
-                  <td className="p-4 text-center">{ad.qualAmount}</td>
-                  <td className="p-4 text-center">{formatters.toCurrency(ad.costPerQualifiedLead)}</td>
+                  <td className="p-4 text-center text-sm text-gray-900 group-hover:text-blue-600 transition-colors">
+                    {formatters.toLocale(ad.clicks)}
+                  </td>
+                  <td className="p-4 text-center text-sm text-gray-900 group-hover:text-blue-600 transition-colors">
+                    {formatters.toFixed(ad.ctr)}%
+                  </td>
+                  <td className="p-4 text-center text-sm text-gray-900 group-hover:text-blue-600 transition-colors">
+                    {formatters.toLocale(ad.reach)}
+                  </td>
+                  <td className="p-4 text-center text-sm text-gray-900 group-hover:text-blue-600 transition-colors">
+                    {ad.result}
+                  </td>
+                  <td className="p-4 text-center text-sm text-gray-900 group-hover:text-blue-600 transition-colors">
+                    {formatters.toCurrency(ad.costs)}
+                  </td>
+                  <td className="p-4 text-center text-sm text-gray-900 group-hover:text-blue-600 transition-colors">
+                    {formatters.toCurrency(ad.costPerLead)}
+                  </td>
+                  <td className="p-4 text-center text-sm text-gray-900 group-hover:text-blue-600 transition-colors">
+                    {ad.qualAmount}
+                  </td>
+                  <td className="p-4 text-center text-sm text-gray-900 group-hover:text-blue-600 transition-colors">
+                    {formatters.toCurrency(ad.costPerQualifiedLead)}
+                  </td>
                 </tr>
               ))}
             </tbody>

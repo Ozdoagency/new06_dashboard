@@ -172,10 +172,15 @@ const CampaignsTable = ({ campaigns = campaignsData, currentLang }) => {
 
   const sortedCampaigns = getSortedCampaigns(campaigns);
 
+  // Добавляем функцию для получения уникального ключа
+  const getUniqueKey = (campaign, index) => {
+    return campaign.id ? `campaign-${campaign.id}` : `campaign-index-${index}`;
+  };
+
   const renderMobileVersion = () => (
     <div className="w-full space-y-4">
-      {sortedCampaigns.map((campaign) => (
-        <div key={campaign.id} className="bg-white/80 backdrop-blur shadow-[0_4px_20px_-4px_rgba(0,0,0,0.1)] rounded-lg p-4 hover:scale-[1.02] transition-transform">
+      {sortedCampaigns.map((campaign, index) => (
+        <div key={getUniqueKey(campaign, index)} className="bg-white/80 backdrop-blur shadow-[0_4px_20px_-4px_rgba(0,0,0,0.1)] rounded-lg p-4 hover:scale-[1.02] transition-transform">
           <div className="space-y-4">
             <div className="flex justify-between items-start gap-2">
               <h3 className="font-medium text-sm text-gray-900">{campaign.name}</h3>
@@ -205,7 +210,7 @@ const CampaignsTable = ({ campaigns = campaignsData, currentLang }) => {
                 qualAmount: { icon: UserCheck, label: t('table.qualAmount') },
                 qualCost: { icon: UserX, label: t('table.qualCost') }
               }).map(([key, { icon: Icon, label }]) => (
-                <div key={`${campaign.id}-${key}`} className="bg-blue-50/50 rounded-lg p-3">
+                <div key={key} className="bg-blue-50/50 rounded-lg p-3">
                   <div className="flex items-center gap-2 text-blue-600 mb-1">
                     <Icon className="w-4 h-4" />
                     <span className="text-xs font-medium">{label}</span>
@@ -224,38 +229,47 @@ const CampaignsTable = ({ campaigns = campaignsData, currentLang }) => {
 
   const renderDesktopVersion = () => (
     <div className="w-full">
-      <div className="overflow-x-auto">
-        <div className="bg-white/80 backdrop-blur shadow-[0_4px_20px_-4px_rgba(0,0,0,0.1)] rounded-lg">
+      <div className="overflow-x-auto rounded-xl"> {/* Заменили overflow-hidden на overflow-x-auto */}
+        <div className="min-w-max bg-white/80 backdrop-blur shadow-[0_4px_20px_-4px_rgba(0,0,0,0.1)]"> {/* Добавили min-w-max */}
           <table className="w-full table-auto">
             <thead>
               <tr className="border-b border-gray-100">
                 {[
-                  { key: 'name', label: 'Кампанія' },
-                  { key: 'status', label: 'Статус' },
-                  { key: 'clicks', label: 'Кліків' },
-                  { key: 'ctr', label: 'CTR' },
-                  { key: 'reach', label: 'Охоплення' },
-                  { key: 'result', label: 'Результат' },
-                  { key: 'actual', label: 'Витрати' },
-                  { key: 'leadCost', label: 'Ціна ліда' },
-                  { key: 'qualAmount', label: 'Кількість квалу' },
-                  { key: 'qualCost', label: 'Ціна квалу' }
-                ].map(({ key, label }) => (
-                  <th key={`header-${key}`} className="p-4 text-sm font-medium text-gray-500">
-                    {label}
+                  { key: 'name', label: t('table.campaignName') },
+                  { key: 'status', label: t('table.status') },
+                  { key: 'clicks', label: t('table.clicks'), icon: BarChart2 },
+                  { key: 'ctr', label: t('table.ctr'), icon: TrendingUp },
+                  { key: 'reach', label: t('table.reach'), icon: Users },
+                  { key: 'result', label: t('table.result'), icon: Activity },
+                  { key: 'actual', label: t('table.actual'), icon: DollarSign },
+                  { key: 'leadCost', label: t('table.leadCost'), icon: PieChart },
+                  { key: 'qualAmount', label: t('table.qualAmount'), icon: UserCheck },
+                  { key: 'qualCost', label: t('table.qualCost'), icon: UserX }
+                ].map(({ key, label, icon: Icon }) => (
+                  <th 
+                    key={`header-${key}`} 
+                    className="p-4 text-sm font-medium text-gray-500 hover:text-blue-600 cursor-pointer transition-colors"
+                    onClick={() => onSort(key)}
+                  >
+                    <div className="flex items-center justify-center gap-2">
+                      {Icon && <Icon className="w-4 h-4" />}
+                      {label}
+                    </div>
                   </th>
                 ))}
               </tr>
             </thead>
             <tbody>
-              {sortedCampaigns.map((campaign) => (
+              {sortedCampaigns.map((campaign, index) => (
                 <tr 
-                  key={`row-${campaign.id}`}
-                  className="border-b border-gray-50 hover:bg-blue-50/40 transition-colors"
+                  key={getUniqueKey(campaign, index)}
+                  className="border-b border-gray-50 hover:bg-blue-50/40 transition-colors group"
                 >
                   <td className="p-4">
                     <div className="flex items-center gap-3">
-                      <span className="font-medium text-sm text-gray-900">{campaign.name}</span>
+                      <span className="font-medium text-sm text-gray-900 group-hover:text-blue-600 transition-colors">
+                        {campaign.name}
+                      </span>
                     </div>
                   </td>
                   <td className="p-4">
@@ -273,14 +287,30 @@ const CampaignsTable = ({ campaigns = campaignsData, currentLang }) => {
                       {campaign.status}
                     </div>
                   </td>
-                  <td className="p-4 text-center text-sm text-gray-900">{formatters.number(campaign.clicks)}</td>
-                  <td className="p-4 text-center text-sm text-gray-900">{formatters.percent(campaign.ctr)}</td>
-                  <td className="p-4 text-center text-sm text-gray-900">{formatters.number(campaign.reach)}</td>
-                  <td className="p-4 text-center text-sm text-gray-900">{campaign.result}</td>
-                  <td className="p-4 text-center text-sm text-gray-900">{formatters.currency(campaign.actual)}</td>
-                  <td className="p-4 text-center text-sm text-gray-900">{formatters.currency(campaign.leadCost)}</td>
-                  <td className="p-4 text-center text-sm text-gray-900">{campaign.qualAmount}</td>
-                  <td className="p-4 text-center text-sm text-gray-900">{formatters.currency(campaign.qualCost)}</td>
+                  <td className="p-4 text-center text-sm text-gray-900 group-hover:text-blue-600 transition-colors">
+                    {formatters.number(campaign.clicks)}
+                  </td>
+                  <td className="p-4 text-center text-sm text-gray-900 group-hover:text-blue-600 transition-colors">
+                    {formatters.percent(campaign.ctr)}
+                  </td>
+                  <td className="p-4 text-center text-sm text-gray-900 group-hover:text-blue-600 transition-colors">
+                    {formatters.number(campaign.reach)}
+                  </td>
+                  <td className="p-4 text-center text-sm text-gray-900 group-hover:text-blue-600 transition-colors">
+                    {campaign.result}
+                  </td>
+                  <td className="p-4 text-center text-sm text-gray-900 group-hover:text-blue-600 transition-colors">
+                    {formatters.currency(campaign.actual)}
+                  </td>
+                  <td className="p-4 text-center text-sm text-gray-900 group-hover:text-blue-600 transition-colors">
+                    {formatters.currency(campaign.leadCost)}
+                  </td>
+                  <td className="p-4 text-center text-sm text-gray-900 group-hover:text-blue-600 transition-colors">
+                    {campaign.qualAmount}
+                  </td>
+                  <td className="p-4 text-center text-sm text-gray-900 group-hover:text-blue-600 transition-colors">
+                    {formatters.currency(campaign.qualCost)}
+                  </td>
                 </tr>
               ))}
             </tbody>
