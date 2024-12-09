@@ -94,9 +94,24 @@ const formatters = {
 };
 
 const CampaignsTable = ({ campaigns = campaignsData, currentLang }) => {
-  const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
+  const [isMobile, setIsMobile] = useState(false);
   const { t, i18n } = useTranslation();
   const [sortConfig, setSortConfig] = useState({ key: null, direction: 'asc' });
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+
+    // Initial check
+    checkMobile();
+
+    // Add resize listener
+    window.addEventListener('resize', checkMobile);
+
+    // Cleanup
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   useEffect(() => {
     if (currentLang && i18n.language !== currentLang) {
@@ -226,7 +241,7 @@ const CampaignsTable = ({ campaigns = campaignsData, currentLang }) => {
                   { key: 'qualAmount', label: 'Кількість квалу' },
                   { key: 'qualCost', label: 'Ціна квалу' }
                 ].map(({ key, label }) => (
-                  <th key={key} className="p-4 text-sm font-medium text-gray-500">
+                  <th key={`header-${key}`} className="p-4 text-sm font-medium text-gray-500">
                     {label}
                   </th>
                 ))}
@@ -235,7 +250,7 @@ const CampaignsTable = ({ campaigns = campaignsData, currentLang }) => {
             <tbody>
               {sortedCampaigns.map((campaign) => (
                 <tr 
-                  key={campaign.id}
+                  key={`row-${campaign.id}`}
                   className="border-b border-gray-50 hover:bg-blue-50/40 transition-colors"
                 >
                   <td className="p-4">
@@ -277,7 +292,7 @@ const CampaignsTable = ({ campaigns = campaignsData, currentLang }) => {
 
   return (
     <div>
-      {isMobile ? renderMobileVersion() : renderDesktopVersion()}
+      {typeof window !== 'undefined' && (isMobile ? renderMobileVersion() : renderDesktopVersion())}
     </div>
   );
 };
